@@ -1,6 +1,7 @@
 ﻿using System.Net.Http;
 using System.Threading.Tasks;
 using ConsulSharp.Core;
+using ConsulSharp.V1.Commons;
 using Newtonsoft.Json.Linq;
 
 namespace ConsulSharp.V1
@@ -14,10 +15,15 @@ namespace ConsulSharp.V1
             _polymath = polymath;
         }
 
-        public async Task<string> BootstrapAsync()
+        public async Task<Response<string>> BootstrapAsync(Request request = null)
         {
-            var jtoken = await _polymath.MakeConsulApiRequest<JToken>("v1/acl/bootstrap", HttpMethod.Put).ConfigureAwait(_polymath.ConsulClientSettings.ContinueAsyncTasksOnCapturedContext);
-            return jtoken["ID"].Value<string>();
+            var jtokenResponse = await _polymath.MakeConsulApiRequest<JToken>(request, "v1/acl/bootstrap", HttpMethod.Put).ConfigureAwait(_polymath.ConsulClientSettings.ContinueAsyncTasksOnCapturedContext);
+
+            return new Response<string>
+            {
+                Index = jtokenResponse.Index,
+                ResponseData = jtokenResponse.ResponseData["ID"].Value<string>(),
+            };
         }
     }
 }

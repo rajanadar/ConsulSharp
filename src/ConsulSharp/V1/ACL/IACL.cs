@@ -1,4 +1,5 @@
 ﻿using System.Threading.Tasks;
+using ConsulSharp.V1.Commons;
 
 namespace ConsulSharp.V1
 {
@@ -16,6 +17,6 @@ namespace ConsulSharp.V1
         /// This provides a mechanism to bootstrap ACLs without having any secrets present in Consul's configuration files.
         /// </summary>
         /// <returns>The Id of the management token.</returns>
-        Task<string> BootstrapAsync();
+        Task<Response<string>> BootstrapAsync(Request request = null);
     }
 }

@@ -5,6 +5,7 @@ using System.Net;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
+using ConsulSharp.V1.Commons;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
@@ -13,7 +14,9 @@ namespace ConsulSharp.Core
     internal class Polymath
     {
         private const string ConsulTokenHeaderKey = "X-Consul-Token";
-        private const string ConsulWrapTimeToLiveHeaderKey = "X-Consul-Wrap-TTL";
+        private const string ConsulIndexHeaderKey = "X-Consul-Index";
+        private const string ConsulLastContactHeaderKey = "X-Consul-LastContact";
+        private const string ConsulKnownLeaderHeaderKey = "X-Consul-KnownLeader";
 
         private readonly HttpClient _httpClient;
 
@@ -35,12 +38,12 @@ namespace ConsulSharp.Core
             }
         }
 
-        public async Task MakeConsulApiRequest(string resourcePath, HttpMethod httpMethod, object requestData = null, bool rawResponse = false, bool unauthenticated = false)
+        public async Task MakeConsulApiRequest(Request request, string resourcePath, HttpMethod httpMethod, object requestData = null, bool rawResponse = false, bool unauthenticated = false)
         {
-            await MakeConsulApiRequest<JToken>(resourcePath, httpMethod, requestData, rawResponse, unauthenticated: unauthenticated);
+            await MakeConsulApiRequest<JToken>(request, resourcePath, httpMethod, requestData, rawResponse, unauthenticated: unauthenticated);
         }
 
-        public async Task<TResponse> MakeConsulApiRequest<TResponse>(string resourcePath, HttpMethod httpMethod, object requestData = null, bool rawResponse = false, Action<HttpResponseMessage> postResponseAction = null, string wrapTimeToLive = null, bool unauthenticated = false) where TResponse : class
+        public async Task<Response<TResponseData>> MakeConsulApiRequest<TResponseData>(Request request, string resourcePath, HttpMethod httpMethod, object requestData = null, bool rawResponse = false, Action<HttpResponseMessage> postResponseAction = null, bool unauthenticated = false) where TResponseData : class
         {
             var headers = new Dictionary<string, string>();
 
@@ -49,15 +52,44 @@ namespace ConsulSharp.Core
                 headers.Add(ConsulTokenHeaderKey, ConsulClientSettings.ConsulToken);
             }
 
-            return await MakeRequestAsync<TResponse>(resourcePath, httpMethod, requestData, headers, rawResponse, postResponseAction).ConfigureAwait(ConsulClientSettings.ContinueAsyncTasksOnCapturedContext);
+            return await MakeRequestAsync<TResponseData>(request, resourcePath, httpMethod, requestData, headers, rawResponse, postResponseAction).ConfigureAwait(ConsulClientSettings.ContinueAsyncTasksOnCapturedContext);
         }
 
-        /// //////
-
-        protected async Task<TResponse> MakeRequestAsync<TResponse>(string resourcePath, HttpMethod httpMethod, object requestData = null, IDictionary<string, string> headers = null, bool rawResponse = false, Action<HttpResponseMessage> postResponseAction = null) where TResponse : class
+        private async Task<Response<TResponseData>> MakeRequestAsync<TResponseData>(Request request, string resourcePath, HttpMethod httpMethod, object requestData = null, IDictionary<string, string> headers = null, bool rawResponse = false, Action<HttpResponseMessage> postResponseAction = null) where TResponseData : class
         {
             try
             {
+                if (request != null)
+                {
+                    if (!string.IsNullOrWhiteSpace(request.Index))
+                    {
+                        var kv = "index=" + request.Index;
+                        var joiner = resourcePath.Contains("?") ? "&" : "?";
+
+                        resourcePath = resourcePath + joiner + kv;
+                    }
+
+                    if (!string.IsNullOrWhiteSpace(request.Wait))
+                    {
+                        var kv = "wait=" + request.Wait;
+                        var joiner = resourcePath.Contains("?") ? "&" : "?";
+
+                        resourcePath = resourcePath + joiner + kv;
+                    }
+
+                    if (request.ConsistencyMode != ConsistencyMode.@default)
+                    {
+                        var joiner = resourcePath.Contains("?") ? "&" : "?";
+                        resourcePath = resourcePath + joiner + request.ConsistencyMode.ToString();
+                    }
+
+                    if (request.PrettyJsonResponse)
+                    {
+                        var joiner = resourcePath.Contains("?") ? "&" : "?";
+                        resourcePath = resourcePath + joiner + "pretty";
+                    }
+                }
+
                 var requestUri = new Uri(_httpClient.BaseAddress, resourcePath);
 
                 var requestContent = requestData != null
@@ -127,15 +159,50 @@ namespace ConsulSharp.Core
                     await
                         httpResponseMessage.Content.ReadAsStringAsync().ConfigureAwait(ConsulClientSettings.ContinueAsyncTasksOnCapturedContext);
 
+                var response = new Response<TResponseData>();
+
+                IEnumerable<string> values;
+
+                if (httpResponseMessage.Headers.TryGetValues(ConsulIndexHeaderKey, out values) && values != null)
+                {
+                    // for cross platform, use the iterator instead of linq stuff.
+                    foreach(var value in values)
+                    {
+                        response.Index = value;
+                        break;
+                    }
+                }
+
+                values = null;
+
+                if (httpResponseMessage.Headers.TryGetValues(ConsulLastContactHeaderKey, out values) && values != null)
+                {
+                    foreach (var value in values)
+                    {
+                        response.LastContactMilliseconds = long.Parse(value);
+                        break;
+                    }
+                }
+
+                values = null;
+
+                if (httpResponseMessage.Headers.TryGetValues(ConsulKnownLeaderHeaderKey, out values) && values != null)
+                {
+                    foreach (var value in values)
+                    {
+                        response.KnownLeader = value;
+                        break;
+                    }
+                }
+
                 if (httpResponseMessage.IsSuccessStatusCode)
                 {
                     if (!string.IsNullOrWhiteSpace(responseText))
                     {
-                        var response = rawResponse ? (responseText as TResponse) : JsonConvert.DeserializeObject<TResponse>(responseText);
-                        return response;
+                        response.ResponseData = rawResponse ? (responseText as TResponseData) : JsonConvert.DeserializeObject<TResponseData>(responseText);
                     }
 
-                    return default(TResponse);
+                    return response;
                 }
 
                 throw new ConsulApiException(httpResponseMessage.StatusCode, responseText);

@@ -2,6 +2,7 @@
 using System.IO;
 using System.Net;
 using ConsulSharp.Core;
+using ConsulSharp.V1.Commons;
 using Newtonsoft.Json;
 using Xunit;
 
@@ -83,10 +84,19 @@ namespace ConsulSharp.Samples
 
         private static void RunAclSamples()
         {
-            _managementToken = _consulClient.V1.ACL.BootstrapAsync().Result;
-            Assert.NotNull(_managementToken);
+            var request = new Request
+            {
+                ConsistencyMode = ConsistencyMode.consistent,
+                PrettyJsonResponse = true,
+                Wait = "10s"
+            };
 
-            var consulException = Assert.ThrowsAsync<ConsulApiException>(_consulClient.V1.ACL.BootstrapAsync).Result;
+            var managementTokenResponse = _consulClient.V1.ACL.BootstrapAsync(request).Result;
+            Assert.NotNull(managementTokenResponse.ResponseData);
+
+            _managementToken = managementTokenResponse.ResponseData;
+
+            var consulException = Assert.ThrowsAsync<ConsulApiException>(() => _consulClient.V1.ACL.BootstrapAsync()).Result;
             Assert.Equal(HttpStatusCode.Forbidden, consulException.HttpStatusCode);
         }
 
