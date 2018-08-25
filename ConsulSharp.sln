@@ -1,0 +1,37 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.27703.2047
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ConsulSharp", "src\ConsulSharp\ConsulSharp.csproj", "{9D3821B4-6F7B-493D-AC90-68130AFE67AB}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ConsulSharp.Samples", "test\ConsulSharp.Samples\ConsulSharp.Samples.csproj", "{9470EAAC-91D4-4441-B8E2-E6EA5A5B94AE}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{65A31A84-C3E5-468F-B084-64B65DD3AB2B}"
+	ProjectSection(SolutionItems) = preProject
+		CHANGELOG.md = CHANGELOG.md
+		README.md = README.md
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{9D3821B4-6F7B-493D-AC90-68130AFE67AB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9D3821B4-6F7B-493D-AC90-68130AFE67AB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9D3821B4-6F7B-493D-AC90-68130AFE67AB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9D3821B4-6F7B-493D-AC90-68130AFE67AB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9470EAAC-91D4-4441-B8E2-E6EA5A5B94AE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9470EAAC-91D4-4441-B8E2-E6EA5A5B94AE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9470EAAC-91D4-4441-B8E2-E6EA5A5B94AE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9470EAAC-91D4-4441-B8E2-E6EA5A5B94AE}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {EFF3C32F-78F1-4E69-9241-3BC1112A59CC}
+	EndGlobalSection
+EndGlobal
