@@ -13,7 +13,7 @@ A cross-platform .NET Library for HashiCorp's Consul - A Secret Management Syste
 
 [![Join the chat at https://gitter.im/rajanadar-ConsulSharp/Lobby](https://badges.gitter.im/rajanadar-ConsulSharp/Lobby.svg)](https://gitter.im/rajanadar-ConsulSharp/Lobby?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)	
 [![License](https://img.shields.io/:license-apache%202.0-brightgreen.svg)](http://www.apache.org/licenses/LICENSE-2.0.html)	
-[![Build status](https://ci.appveyor.com/api/projects/status/aldh4a6n2t7hthdv?svg=true)](https://ci.appveyor.com/project/rajanadar/ConsulSharp)
+[![Build status](https://ci.appveyor.com/api/projects/status/aldh4a6n2t7hthdv?svg=true)](https://ci.appveyor.com/project/rajanadar/ConsulSharp) [![Join the chat at https://gitter.im/rajanadar-ConsulSharp/Lobby](https://badges.gitter.im/rajanadar-ConsulSharp/Lobby.svg)](https://gitter.im/rajanadar-ConsulSharp/Lobby?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
 ### What is ConsulSharp?	
 
