@@ -3,7 +3,7 @@
     /// <summary>
     /// Represents a Consul request.
     /// </summary>
-    public class Request
+    public class ConsulRequest
     {
         /// <summary>
         /// Most of the read query endpoints support multiple levels of consistency. 

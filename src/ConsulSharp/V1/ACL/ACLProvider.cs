@@ -15,15 +15,16 @@ namespace ConsulSharp.V1
             _polymath = polymath;
         }
 
-        public async Task<Response<string>> BootstrapAsync(Request request = null)
+        public async Task<ConsulResponse<string>> BootstrapAsync(ConsulRequest request = null)
         {
             var jtokenResponse = await _polymath.MakeConsulApiRequest<JToken>(request, "v1/acl/bootstrap", HttpMethod.Put).ConfigureAwait(_polymath.ConsulClientSettings.ContinueAsyncTasksOnCapturedContext);
+            return jtokenResponse.Map(() => jtokenResponse.ResponseData["ID"].Value<string>());
+        }
 
-            return new Response<string>
-            {
-                Index = jtokenResponse.Index,
-                ResponseData = jtokenResponse.ResponseData["ID"].Value<string>(),
-            };
+        public async Task<ConsulResponse<string>> CreateTokenAsync(ConsulRequest<TokenRequestModel> request)
+        {
+            var jtokenResponse = await _polymath.MakeConsulApiRequest<JToken>(request, "v1/acl/create", HttpMethod.Put, request.RequestData).ConfigureAwait(_polymath.ConsulClientSettings.ContinueAsyncTasksOnCapturedContext);
+            return jtokenResponse.Map(() => jtokenResponse.ResponseData["ID"].Value<string>());
         }
     }
 }

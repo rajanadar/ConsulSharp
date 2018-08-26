@@ -2,6 +2,7 @@
 using System.IO;
 using System.Net;
 using ConsulSharp.Core;
+using ConsulSharp.V1;
 using ConsulSharp.V1.Commons;
 using Newtonsoft.Json;
 using Xunit;
@@ -37,25 +38,31 @@ namespace ConsulSharp.Samples
 
         public static void Main(string[] args)
         {
-            const string path = "ProgramOutput.txt";
+            var existingOut = Console.Out;
 
-            using (var fs = new FileStream(path, FileMode.Create))
+            try
             {
-                using (var sw = new StreamWriter(fs))
+                const string path = "ProgramOutput.txt";
+
+                using (var fs = new FileStream(path, FileMode.Create))
                 {
-                    Console.WriteLine();
-                    Console.Write("Writing results to file. Hang tight...");
+                    using (var sw = new StreamWriter(fs))
+                    {
+                        Console.WriteLine();
+                        Console.Write("Writing results to file. Hang tight...");
 
-                    var existingOut = Console.Out;
-                    Console.SetOut(sw);
+                        Console.SetOut(sw);
 
-                    RunAllSamples();
-
-                    Console.SetOut(existingOut);
-
-                    Console.WriteLine();
-                    Console.Write("I think we are done here. Press any key to exit...");
+                        RunAllSamples();
+                    }
                 }
+            }
+            finally
+            {
+                Console.SetOut(existingOut);
+
+                Console.WriteLine();
+                Console.Write("I think we are done here. Press any key to exit...");
             }
 
             Console.ReadLine();
@@ -70,12 +77,14 @@ namespace ConsulSharp.Samples
                     var value = ((int)r.StatusCode + "-" + r.StatusCode) + "\n";
                     var content = r.Content != null ? r.Content.ReadAsStringAsync().Result : string.Empty;
 
-                    _responseContent = "From Consul Server: " + value + content;
+                    Console.WriteLine();
+                    Console.WriteLine("==============================================================================");
+                    Console.WriteLine();
 
-                    if (!string.IsNullOrWhiteSpace(content))
-                    {
-                        Console.WriteLine(_responseContent);
-                    }
+                    _responseContent = "Actual Consul Server Response: " + value + content;
+                    Console.WriteLine(_responseContent);
+
+                    Console.WriteLine("-------------------------------------");
                 }
             });
 
@@ -84,7 +93,7 @@ namespace ConsulSharp.Samples
 
         private static void RunAclSamples()
         {
-            var request = new Request
+            var request = new ConsulRequest
             {
                 ConsistencyMode = ConsistencyMode.consistent,
                 PrettyJsonResponse = true,
@@ -92,18 +101,46 @@ namespace ConsulSharp.Samples
             };
 
             var managementTokenResponse = _consulClient.V1.ACL.BootstrapAsync(request).Result;
+            DisplayJson(managementTokenResponse);
             Assert.NotNull(managementTokenResponse.ResponseData);
 
             _managementToken = managementTokenResponse.ResponseData;
+            _consulClient = new ConsulClient(new ConsulClientSettings("http://127.0.0.1:8500", _managementToken)
+            {
+                AfterApiResponseAction = r =>
+                {
+                    var value = ((int)r.StatusCode + "-" + r.StatusCode) + "\n";
+                    var content = r.Content != null ? r.Content.ReadAsStringAsync().Result : string.Empty;
+
+                    Console.WriteLine();
+                    Console.WriteLine("==============================================================================");
+                    Console.WriteLine();
+
+                    _responseContent = "Actual Consul Server Response: " + value + content;
+                    Console.WriteLine(_responseContent);
+
+                    Console.WriteLine("-------------------------------------");
+                }
+            });
 
             var consulException = Assert.ThrowsAsync<ConsulApiException>(() => _consulClient.V1.ACL.BootstrapAsync()).Result;
             Assert.Equal(HttpStatusCode.Forbidden, consulException.HttpStatusCode);
+
+            var newTokenModel = new TokenRequestModel
+            {
+                Id = Guid.NewGuid().ToString(),
+                Name = "my-app-token",
+                Rules = "",
+                TokenType = TokenType.client
+            };
+
+            var newToken = _consulClient.V1.ACL.CreateTokenAsync(new ConsulRequest<TokenRequestModel> { RequestData = newTokenModel }).Result;
+            DisplayJson(newToken);
+            Assert.Equal(newTokenModel.Id, newToken.ResponseData);
         }
 
         private static void DisplayJson<T>(T value)
         {
-            string line = "===========";
-
             var type = typeof(T);
             var genTypes = type.GenericTypeArguments;
 
@@ -112,7 +149,7 @@ namespace ConsulSharp.Samples
                 var genType = genTypes[0];
                 var subGenTypes = genType.GenericTypeArguments;
 
-                // single generic. e.g. SecretsEngine<AuthBackend>
+                // single generic. e.g. Response<SomeType>
                 if (subGenTypes == null || subGenTypes.Length == 0)
                 {
                     Console.WriteLine(type.Name.Substring(0, type.Name.IndexOf('`')) + "<" + genType.Name + ">");
@@ -149,12 +186,7 @@ namespace ConsulSharp.Samples
                 Console.WriteLine(type.Name);
             }
 
-            Console.WriteLine(line + line);
-            Console.WriteLine(_responseContent);
             Console.WriteLine(JsonConvert.SerializeObject(value));
-            Console.WriteLine(line + line);
-            Console.WriteLine();
-            Console.WriteLine();
         }
     }
 }

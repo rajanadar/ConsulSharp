@@ -38,12 +38,12 @@ namespace ConsulSharp.Core
             }
         }
 
-        public async Task MakeConsulApiRequest(Request request, string resourcePath, HttpMethod httpMethod, object requestData = null, bool rawResponse = false, bool unauthenticated = false)
+        public async Task MakeConsulApiRequest(ConsulRequest request, string resourcePath, HttpMethod httpMethod, object requestData = null, bool rawResponse = false, bool unauthenticated = false)
         {
             await MakeConsulApiRequest<JToken>(request, resourcePath, httpMethod, requestData, rawResponse, unauthenticated: unauthenticated);
         }
 
-        public async Task<Response<TResponseData>> MakeConsulApiRequest<TResponseData>(Request request, string resourcePath, HttpMethod httpMethod, object requestData = null, bool rawResponse = false, Action<HttpResponseMessage> postResponseAction = null, bool unauthenticated = false) where TResponseData : class
+        public async Task<ConsulResponse<TResponseData>> MakeConsulApiRequest<TResponseData>(ConsulRequest request, string resourcePath, HttpMethod httpMethod, object requestData = null, bool rawResponse = false, Action<HttpResponseMessage> postResponseAction = null, bool unauthenticated = false) where TResponseData : class
         {
             var headers = new Dictionary<string, string>();
 
@@ -55,7 +55,7 @@ namespace ConsulSharp.Core
             return await MakeRequestAsync<TResponseData>(request, resourcePath, httpMethod, requestData, headers, rawResponse, postResponseAction).ConfigureAwait(ConsulClientSettings.ContinueAsyncTasksOnCapturedContext);
         }
 
-        private async Task<Response<TResponseData>> MakeRequestAsync<TResponseData>(Request request, string resourcePath, HttpMethod httpMethod, object requestData = null, IDictionary<string, string> headers = null, bool rawResponse = false, Action<HttpResponseMessage> postResponseAction = null) where TResponseData : class
+        private async Task<ConsulResponse<TResponseData>> MakeRequestAsync<TResponseData>(ConsulRequest request, string resourcePath, HttpMethod httpMethod, object requestData = null, IDictionary<string, string> headers = null, bool rawResponse = false, Action<HttpResponseMessage> postResponseAction = null) where TResponseData : class
         {
             try
             {
@@ -159,7 +159,7 @@ namespace ConsulSharp.Core
                     await
                         httpResponseMessage.Content.ReadAsStringAsync().ConfigureAwait(ConsulClientSettings.ContinueAsyncTasksOnCapturedContext);
 
-                var response = new Response<TResponseData>();
+                var response = new ConsulResponse<TResponseData>();
 
                 IEnumerable<string> values;
 

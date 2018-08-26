@@ -1,10 +1,12 @@
-﻿namespace ConsulSharp.V1.Commons
+﻿using System;
+
+namespace ConsulSharp.V1.Commons
 {
     /// <summary>
     /// Represents a Consul response.
     /// </summary>
     /// <typeparam name="TResponseData">The type of the data contained in the response.</typeparam>
-    public class Response<TResponseData>
+    public class ConsulResponse<TResponseData>
     {
         /// <summary>
         /// Gets or sets the time in milliseconds that a server was last contacted by the leader node.
@@ -28,5 +30,16 @@
         /// The data.
         /// </value>
         public TResponseData ResponseData { get; set; }
+
+        internal ConsulResponse<T2> Map<T2>(Func<T2> func)
+        {
+            return new ConsulResponse<T2>
+            {
+                Index = this.Index,
+                KnownLeader = this.KnownLeader,
+                LastContactMilliseconds = this.LastContactMilliseconds,
+                ResponseData = func != null ? func() : default(T2)
+            };
+        }
     }
 }

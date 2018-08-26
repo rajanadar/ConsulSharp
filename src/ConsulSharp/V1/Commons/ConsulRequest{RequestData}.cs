@@ -4,7 +4,7 @@
     /// Represents a Consul request.
     /// </summary>
     /// <typeparam name="TRequestData">The type of the data contained in the request.</typeparam>
-    public class Request<TRequestData> : Request
+    public class ConsulRequest<TRequestData> : ConsulRequest
     {
         /// <summary>
         /// Gets or sets the request data.
