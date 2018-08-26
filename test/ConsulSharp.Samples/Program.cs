@@ -24,6 +24,8 @@ using Xunit;
   
  */
 
+    // raja todo: request equality.
+
 namespace ConsulSharp.Samples
 {
     class Program
@@ -102,9 +104,9 @@ namespace ConsulSharp.Samples
 
             var managementTokenResponse = _consulClient.V1.ACL.BootstrapAsync(request).Result;
             DisplayJson(managementTokenResponse);
-            Assert.NotNull(managementTokenResponse.ResponseData);
+            Assert.NotNull(managementTokenResponse.Data);
 
-            _managementToken = managementTokenResponse.ResponseData;
+            _managementToken = managementTokenResponse.Data;
             _consulClient = new ConsulClient(new ConsulClientSettings("http://127.0.0.1:8500", _managementToken)
             {
                 AfterApiResponseAction = r =>
@@ -136,7 +138,45 @@ namespace ConsulSharp.Samples
 
             var newToken = _consulClient.V1.ACL.CreateTokenAsync(new ConsulRequest<TokenRequestModel> { RequestData = newTokenModel }).Result;
             DisplayJson(newToken);
-            Assert.Equal(newTokenModel.Id, newToken.ResponseData);
+            Assert.Equal(newTokenModel.Id, newToken.Data);
+
+            var updateTokenModel = new TokenRequestModel
+            {
+                Id = newTokenModel.Id,
+                Name = "updated",
+                Rules = "",
+                TokenType = TokenType.client
+            };
+
+            newToken = _consulClient.V1.ACL.UpdateTokenAsync(new ConsulRequest<TokenRequestModel> { RequestData = updateTokenModel }).Result;
+            DisplayJson(newToken);
+            Assert.Equal(updateTokenModel.Id, newToken.Data);
+
+            var readToken = _consulClient.V1.ACL.ReadTokenAsync(new ConsulRequest<string> { RequestData = updateTokenModel.Id }).Result;
+            DisplayJson(readToken);
+            Assert.Equal(updateTokenModel.Name, readToken.Data[0].Name);
+
+            var clonedToken = _consulClient.V1.ACL.CloneTokenAsync(new ConsulRequest<string> { RequestData = readToken.Data[0].Id }).Result;
+            DisplayJson(clonedToken);
+            Assert.NotNull(clonedToken.Data);
+
+            var list = _consulClient.V1.ACL.ListTokensAsync().Result;
+            DisplayJson(list);
+            Assert.True(list.Data.Count > 1);
+
+            var repStatus = _consulClient.V1.ACL.CheckReplicationAsync().Result;
+            DisplayJson(repStatus);
+            Assert.NotNull(repStatus.Data);
+
+            var del1 = _consulClient.V1.ACL.DeleteTokenAsync(new ConsulRequest<string> { RequestData = readToken.Data[0].Id }).Result;
+            DisplayJson(del1);
+
+            var tokens = _consulClient.V1.ACL.ReadTokenAsync(new ConsulRequest<string> { RequestData = updateTokenModel.Id }).Result;
+            DisplayJson(tokens);
+            Assert.True(tokens.Data.Count == 0);
+
+            var del2 = _consulClient.V1.ACL.DeleteTokenAsync(new ConsulRequest<string> { RequestData = clonedToken.Data }).Result;
+            DisplayJson(del2);
         }
 
         private static void DisplayJson<T>(T value)

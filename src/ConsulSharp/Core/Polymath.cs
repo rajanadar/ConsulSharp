@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Net;
 using System.Net.Http;
@@ -61,9 +62,9 @@ namespace ConsulSharp.Core
             {
                 if (request != null)
                 {
-                    if (!string.IsNullOrWhiteSpace(request.Index))
+                    if (request.Index != null)
                     {
-                        var kv = "index=" + request.Index;
+                        var kv = "index=" + request.Index.Value;
                         var joiner = resourcePath.Contains("?") ? "&" : "?";
 
                         resourcePath = resourcePath + joiner + kv;
@@ -168,7 +169,7 @@ namespace ConsulSharp.Core
                     // for cross platform, use the iterator instead of linq stuff.
                     foreach(var value in values)
                     {
-                        response.Index = value;
+                        response.Index = int.Parse(value, CultureInfo.InvariantCulture);
                         break;
                     }
                 }
@@ -190,7 +191,7 @@ namespace ConsulSharp.Core
                 {
                     foreach (var value in values)
                     {
-                        response.KnownLeader = value;
+                        response.KnownLeader = bool.Parse(value);
                         break;
                     }
                 }
@@ -199,7 +200,7 @@ namespace ConsulSharp.Core
                 {
                     if (!string.IsNullOrWhiteSpace(responseText))
                     {
-                        response.ResponseData = rawResponse ? (responseText as TResponseData) : JsonConvert.DeserializeObject<TResponseData>(responseText);
+                        response.Data = rawResponse ? (responseText as TResponseData) : JsonConvert.DeserializeObject<TResponseData>(responseText);
                     }
 
                     return response;

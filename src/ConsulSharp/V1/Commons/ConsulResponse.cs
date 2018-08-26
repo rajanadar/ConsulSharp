@@ -11,7 +11,7 @@ namespace ConsulSharp.V1.Commons
         /// <summary>
         /// Gets or sets the time in milliseconds that a server was last contacted by the leader node.
         /// </summary>
-        public string Index { get; set; }
+        public int? Index { get; set; }
 
         /// <summary>
         /// Gets or sets the unique identifier representing the current state of the requested resource for blocking queries.
@@ -21,7 +21,7 @@ namespace ConsulSharp.V1.Commons
         /// <summary>
         /// Gets or sets the known leader.
         /// </summary>
-        public string KnownLeader { get; set; }
+        public bool? KnownLeader { get; set; }
 
         /// <summary>
         /// Gets or sets the response data.
@@ -29,7 +29,7 @@ namespace ConsulSharp.V1.Commons
         /// <value>
         /// The data.
         /// </value>
-        public TResponseData ResponseData { get; set; }
+        public TResponseData Data { get; set; }
 
         internal ConsulResponse<T2> Map<T2>(Func<T2> func)
         {
@@ -38,7 +38,7 @@ namespace ConsulSharp.V1.Commons
                 Index = this.Index,
                 KnownLeader = this.KnownLeader,
                 LastContactMilliseconds = this.LastContactMilliseconds,
-                ResponseData = func != null ? func() : default(T2)
+                Data = func != null ? func() : default(T2)
             };
         }
     }
