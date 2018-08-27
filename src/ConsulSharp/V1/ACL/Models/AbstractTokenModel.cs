@@ -1,7 +1,7 @@
 ﻿using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 
-namespace ConsulSharp.V1
+namespace ConsulSharp.V1.ACL.Models
 {
     /// <summary>
     /// The Abstract Token model.

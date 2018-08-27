@@ -1,9 +1,12 @@
 ﻿using System;
 using System.IO;
 using System.Net;
+using System.Text;
 using ConsulSharp.Core;
 using ConsulSharp.V1;
+using ConsulSharp.V1.ACL.Models;
 using ConsulSharp.V1.Commons;
+using ConsulSharp.V1.KeyValue.Models;
 using Newtonsoft.Json;
 using Xunit;
 
@@ -33,36 +36,26 @@ namespace ConsulSharp.Samples
         private const string ExpectedConsulVersion = "1.2.2";
 
         private static string _responseContent;
-
         private static IConsulClient _consulClient;
 
         private static string _managementToken;
+        private static StringBuilder output = new StringBuilder();
 
         public static void Main(string[] args)
         {
-            var existingOut = Console.Out;
+            const string path = "ProgramOutput.txt";
 
             try
             {
-                const string path = "ProgramOutput.txt";
+                Console.WriteLine();
+                Console.Write("Writing results to file. Hang tight...");
 
-                using (var fs = new FileStream(path, FileMode.Create))
-                {
-                    using (var sw = new StreamWriter(fs))
-                    {
-                        Console.WriteLine();
-                        Console.Write("Writing results to file. Hang tight...");
-
-                        Console.SetOut(sw);
-
-                        RunAllSamples();
-                    }
-                }
+                RunAllSamples();
             }
             finally
             {
-                Console.SetOut(existingOut);
-
+                File.WriteAllText(path, output.ToString());
+        
                 Console.WriteLine();
                 Console.Write("I think we are done here. Press any key to exit...");
             }
@@ -79,22 +72,62 @@ namespace ConsulSharp.Samples
                     var value = ((int)r.StatusCode + "-" + r.StatusCode) + "\n";
                     var content = r.Content != null ? r.Content.ReadAsStringAsync().Result : string.Empty;
 
-                    Console.WriteLine();
-                    Console.WriteLine("==============================================================================");
-                    Console.WriteLine();
+                    output.AppendLine();
+                    output.AppendLine("==============================================================================");
+                    output.AppendLine();
 
                     _responseContent = "Actual Consul Server Response: " + value + content;
-                    Console.WriteLine(_responseContent);
+                    output.AppendLine(_responseContent);
 
-                    Console.WriteLine("-------------------------------------");
+                    output.AppendLine("-------------------------------------");
                 }
             });
 
             RunAclSamples();
+            RunKeyValueSamples();
+        }
+
+        private static void RunKeyValueSamples()
+        {
+            output.AppendLine("\nKV Samples\n");
+
+            var createKey = new WriteKeyValueModel
+            {
+                Key = Guid.NewGuid().ToString(),
+                Flags = 32,
+                Value = "some-value"
+            };
+
+            var createResponse = _consulClient.V1.KeyValue.WriteAsync(new ConsulRequest<WriteKeyValueModel> { RequestData = createKey }).Result;
+            DisplayJson(createResponse);
+            Assert.True(createResponse.Data);
+
+            var readKeyModel = new ReadKeyValueModel
+            {
+                Key = createKey.Key,
+            };
+
+            var readRequest = new ConsulRequest<ReadKeyValueModel> { RequestData = readKeyModel };
+
+            var readKeyResponse = _consulClient.V1.KeyValue.ReadAsync(readRequest).Result;
+            DisplayJson(readKeyResponse);
+            Assert.Equal(readKeyModel.Key, readKeyResponse.Data.KeyValueModels[0].Key);
+
+            readRequest.RequestData.RawResponse = true;
+            var raw = _consulClient.V1.KeyValue.ReadAsync(readRequest).Result;
+            DisplayJson(raw);
+            Assert.Equal(createKey.Value, raw.Data.RawValue);
+
+            readRequest.RequestData.KeysOnly = true;
+            var keys = _consulClient.V1.KeyValue.ReadAsync(readRequest).Result;
+            DisplayJson(keys);
+            Assert.True(keys.Data.Keys.Count == 1);
         }
 
         private static void RunAclSamples()
         {
+            output.AppendLine("\nACL Samples\n");
+
             var request = new ConsulRequest
             {
                 ConsistencyMode = ConsistencyMode.consistent,
@@ -114,14 +147,14 @@ namespace ConsulSharp.Samples
                     var value = ((int)r.StatusCode + "-" + r.StatusCode) + "\n";
                     var content = r.Content != null ? r.Content.ReadAsStringAsync().Result : string.Empty;
 
-                    Console.WriteLine();
-                    Console.WriteLine("==============================================================================");
-                    Console.WriteLine();
+                    output.AppendLine();
+                    output.AppendLine("==============================================================================");
+                    output.AppendLine();
 
                     _responseContent = "Actual Consul Server Response: " + value + content;
-                    Console.WriteLine(_responseContent);
+                    output.AppendLine(_responseContent);
 
-                    Console.WriteLine("-------------------------------------");
+                    output.AppendLine("-------------------------------------");
                 }
             });
 
@@ -192,7 +225,7 @@ namespace ConsulSharp.Samples
                 // single generic. e.g. Response<SomeType>
                 if (subGenTypes == null || subGenTypes.Length == 0)
                 {
-                    Console.WriteLine(type.Name.Substring(0, type.Name.IndexOf('`')) + "<" + genType.Name + ">");
+                    output.AppendLine(type.Name.Substring(0, type.Name.IndexOf('`')) + "<" + genType.Name + ">");
                 }
                 else
                 {
@@ -201,7 +234,7 @@ namespace ConsulSharp.Samples
                     {
                         var subGenType = subGenTypes[0];
 
-                        Console.WriteLine(type.Name.Substring(0, type.Name.IndexOf('`')) + "<" +
+                        output.AppendLine(type.Name.Substring(0, type.Name.IndexOf('`')) + "<" +
                                           genType.Name.Substring(0, genType.Name.IndexOf('`')) +
                                           "<" + subGenType.Name + ">>");
                     }
@@ -213,7 +246,7 @@ namespace ConsulSharp.Samples
                             var subGenType1 = subGenTypes[0];
                             var subGenType2 = subGenTypes[1];
 
-                            Console.WriteLine(type.Name.Substring(0, type.Name.IndexOf('`')) + "<" +
+                            output.AppendLine(type.Name.Substring(0, type.Name.IndexOf('`')) + "<" +
                                               genType.Name.Substring(0, genType.Name.IndexOf('`')) +
                                               "<" + subGenType1.Name + ", " + subGenType2.Name + ">>");
                         }
@@ -223,10 +256,10 @@ namespace ConsulSharp.Samples
             else
             {
                 // non-generic.
-                Console.WriteLine(type.Name);
+                output.AppendLine(type.Name);
             }
 
-            Console.WriteLine(JsonConvert.SerializeObject(value));
+            output.AppendLine(JsonConvert.SerializeObject(value));
         }
     }
 }

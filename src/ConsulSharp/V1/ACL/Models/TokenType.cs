@@ -1,4 +1,4 @@
-﻿namespace ConsulSharp.V1
+﻿namespace ConsulSharp.V1.ACL.Models
 {
     /// <summary>
     /// Token types.

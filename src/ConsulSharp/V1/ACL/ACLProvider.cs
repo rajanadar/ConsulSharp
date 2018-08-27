@@ -2,10 +2,11 @@
 using System.Net.Http;
 using System.Threading.Tasks;
 using ConsulSharp.Core;
+using ConsulSharp.V1.ACL.Models;
 using ConsulSharp.V1.Commons;
 using Newtonsoft.Json.Linq;
 
-namespace ConsulSharp.V1
+namespace ConsulSharp.V1.ACL
 {
     internal class ACLProvider : IACL
     {

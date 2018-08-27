@@ -39,12 +39,12 @@ namespace ConsulSharp.Core
             }
         }
 
-        public async Task MakeConsulApiRequest(ConsulRequest request, string resourcePath, HttpMethod httpMethod, object requestData = null, bool rawResponse = false, bool unauthenticated = false)
+        public async Task MakeConsulApiRequest(ConsulRequest request, string resourcePath, HttpMethod httpMethod, object requestData = null, bool rawRequest = false, bool rawResponse = false, bool unauthenticated = false)
         {
-            await MakeConsulApiRequest<JToken>(request, resourcePath, httpMethod, requestData, rawResponse, unauthenticated: unauthenticated);
+            await MakeConsulApiRequest<JToken>(request, resourcePath, httpMethod, requestData, rawRequest, rawResponse, unauthenticated: unauthenticated);
         }
 
-        public async Task<ConsulResponse<TResponseData>> MakeConsulApiRequest<TResponseData>(ConsulRequest request, string resourcePath, HttpMethod httpMethod, object requestData = null, bool rawResponse = false, Action<HttpResponseMessage> postResponseAction = null, bool unauthenticated = false) where TResponseData : class
+        public async Task<ConsulResponse<TResponseData>> MakeConsulApiRequest<TResponseData>(ConsulRequest request, string resourcePath, HttpMethod httpMethod, object requestData = null, bool rawRequest = false, bool rawResponse = false, Action<HttpResponseMessage> postResponseAction = null, bool unauthenticated = false) where TResponseData : class
         {
             var headers = new Dictionary<string, string>();
 
@@ -53,10 +53,10 @@ namespace ConsulSharp.Core
                 headers.Add(ConsulTokenHeaderKey, ConsulClientSettings.ConsulToken);
             }
 
-            return await MakeRequestAsync<TResponseData>(request, resourcePath, httpMethod, requestData, headers, rawResponse, postResponseAction).ConfigureAwait(ConsulClientSettings.ContinueAsyncTasksOnCapturedContext);
+            return await MakeRequestAsync<TResponseData>(request, resourcePath, httpMethod, requestData, headers, rawRequest, rawResponse, postResponseAction).ConfigureAwait(ConsulClientSettings.ContinueAsyncTasksOnCapturedContext);
         }
 
-        private async Task<ConsulResponse<TResponseData>> MakeRequestAsync<TResponseData>(ConsulRequest request, string resourcePath, HttpMethod httpMethod, object requestData = null, IDictionary<string, string> headers = null, bool rawResponse = false, Action<HttpResponseMessage> postResponseAction = null) where TResponseData : class
+        private async Task<ConsulResponse<TResponseData>> MakeRequestAsync<TResponseData>(ConsulRequest request, string resourcePath, HttpMethod httpMethod, object requestData = null, IDictionary<string, string> headers = null, bool rawRequest = false, bool rawResponse = false, Action<HttpResponseMessage> postResponseAction = null) where TResponseData : class
         {
             try
             {
@@ -94,7 +94,7 @@ namespace ConsulSharp.Core
                 var requestUri = new Uri(_httpClient.BaseAddress, resourcePath);
 
                 var requestContent = requestData != null
-                    ? new StringContent(JsonConvert.SerializeObject(requestData), Encoding.UTF8)
+                    ? new StringContent((rawRequest ? requestData.ToString() : JsonConvert.SerializeObject(requestData)), Encoding.UTF8)
                     : null;
 
                 HttpRequestMessage httpRequestMessage = null;
