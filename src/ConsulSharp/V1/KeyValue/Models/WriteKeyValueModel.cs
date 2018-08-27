@@ -57,7 +57,7 @@ namespace ConsulSharp.V1.KeyValue.Models
         /// <summary>
         /// Value to write.
         /// </summary>
-        public string Value { get; set; }
+        public object Value { get; set; }
 
         internal string ToQueryString()
         {

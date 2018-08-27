@@ -3,3 +3,4 @@
 **FEATURES:**
 
  * All ACL APIs.
+ * All KeyValue APIs.

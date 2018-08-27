@@ -23,5 +23,12 @@ namespace ConsulSharp.V1.KeyValue
         /// <param name="request">The request with key options.</param>
         /// <returns>The key value data in one of several formats.</returns>
         Task<ConsulResponse<KeyValueData>> ReadAsync(ConsulRequest<ReadKeyValueModel> request);
+
+        /// <summary>
+        /// Deletes the key.
+        /// </summary>
+        /// <param name="request">The request with key options.</param>
+        /// <returns>Either true or false, indicating whether the delete succeeded.</returns>
+        Task<ConsulResponse<bool>> DeleteAsync(ConsulRequest<DeleteKeyValueModel> request);
     }
 }

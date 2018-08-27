@@ -122,6 +122,20 @@ namespace ConsulSharp.Samples
             var keys = _consulClient.V1.KeyValue.ReadAsync(readRequest).Result;
             DisplayJson(keys);
             Assert.True(keys.Data.Keys.Count == 1);
+
+            var deleteResponse = _consulClient.V1.KeyValue.DeleteAsync(new ConsulRequest<DeleteKeyValueModel>
+            {
+                RequestData = new DeleteKeyValueModel
+                {
+                    Key = createKey.Key
+                }
+            }).Result;
+
+            DisplayJson(deleteResponse);
+            Assert.True(deleteResponse.Data);
+
+            var consulException = Assert.ThrowsAsync<ConsulApiException>(() => _consulClient.V1.KeyValue.ReadAsync(readRequest)).Result;
+            Assert.Equal(HttpStatusCode.NotFound, consulException.HttpStatusCode);
         }
 
         private static void RunAclSamples()

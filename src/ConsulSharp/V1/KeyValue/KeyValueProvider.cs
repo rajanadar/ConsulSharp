@@ -41,5 +41,11 @@ namespace ConsulSharp.V1.KeyValue
             var response = await _polymath.MakeConsulApiRequest<List<KeyValueModel>>(request, resourcePath, HttpMethod.Get).ConfigureAwait(_polymath.ConsulClientSettings.ContinueAsyncTasksOnCapturedContext);
             return response.Map(() => new KeyValueData { KeyValueModels = response.Data });
         }
+
+        public async Task<ConsulResponse<bool>> DeleteAsync(ConsulRequest<DeleteKeyValueModel> request)
+        {
+            var response = await _polymath.MakeConsulApiRequest<string>(request, "v1/kv/" + request.RequestData.Key.TrimStart('/') + request.RequestData.ToQueryString(), HttpMethod.Delete, rawResponse: true).ConfigureAwait(_polymath.ConsulClientSettings.ContinueAsyncTasksOnCapturedContext);
+            return response.Map(() => bool.Parse(response.Data));
+        }
     }
 }
