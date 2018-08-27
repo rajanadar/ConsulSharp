@@ -85,11 +85,25 @@ namespace ConsulSharp.Samples
 
             RunAclSamples();
             RunKeyValueSamples();
+            RunStatusSamples();
+        }
+
+        private static void RunStatusSamples()
+        {
+            output.AppendLine("\n Status Samples \n");
+
+            var leader = _consulClient.V1.Status.GetRaftLeaderAsync().Result;
+            DisplayJson(leader);
+            Assert.NotNull(leader.Data);
+
+            var peers = _consulClient.V1.Status.GetRaftPeersAsync().Result;
+            DisplayJson(peers);
+            Assert.True(peers.Data.Count == 1);
         }
 
         private static void RunKeyValueSamples()
         {
-            output.AppendLine("\nKV Samples\n");
+            output.AppendLine("\n KV Samples \n");
 
             var createKey = new WriteKeyValueModel
             {
@@ -140,7 +154,7 @@ namespace ConsulSharp.Samples
 
         private static void RunAclSamples()
         {
-            output.AppendLine("\nACL Samples\n");
+            output.AppendLine("\n ACL Samples \n");
 
             var request = new ConsulRequest
             {
