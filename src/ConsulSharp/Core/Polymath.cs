@@ -169,7 +169,7 @@ namespace ConsulSharp.Core
                     // for cross platform, use the iterator instead of linq stuff.
                     foreach(var value in values)
                     {
-                        response.Index = int.Parse(value, CultureInfo.InvariantCulture);
+                        response.Index = long.Parse(value, CultureInfo.InvariantCulture);
                         break;
                     }
                 }

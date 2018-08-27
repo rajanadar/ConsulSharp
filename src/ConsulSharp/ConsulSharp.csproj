@@ -51,8 +51,4 @@
     <Reference Include="System.Net.Http.WebRequest" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="V1\Status\Models\" />
-  </ItemGroup>
-
 </Project>

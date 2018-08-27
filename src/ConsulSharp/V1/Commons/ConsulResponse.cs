@@ -11,7 +11,7 @@ namespace ConsulSharp.V1.Commons
         /// <summary>
         /// Gets or sets the time in milliseconds that a server was last contacted by the leader node.
         /// </summary>
-        public int? Index { get; set; }
+        public long? Index { get; set; }
 
         /// <summary>
         /// Gets or sets the unique identifier representing the current state of the requested resource for blocking queries.

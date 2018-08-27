@@ -6,6 +6,7 @@ using ConsulSharp.Core;
 using ConsulSharp.V1;
 using ConsulSharp.V1.ACL.Models;
 using ConsulSharp.V1.Commons;
+using ConsulSharp.V1.Event.Models;
 using ConsulSharp.V1.KeyValue.Models;
 using Newtonsoft.Json;
 using Xunit;
@@ -84,8 +85,28 @@ namespace ConsulSharp.Samples
             });
 
             RunAclSamples();
+            RunEventSamples();
             RunKeyValueSamples();
             RunStatusSamples();
+        }
+
+        private static void RunEventSamples()
+        {
+            output.AppendLine("\n Event Samples \n");
+
+            var fireModel = new FireEventModel
+            {
+                Name = Guid.NewGuid().ToString(),
+                RawPayload = "test"
+            };
+
+            var newEvent = _consulClient.V1.Event.FireAsync(new ConsulRequest<FireEventModel> { RequestData = fireModel }).Result;
+            DisplayJson(newEvent);
+            Assert.Equal(fireModel.Name, newEvent.Data.Name);
+
+            var events = _consulClient.V1.Event.ListAsync(new ConsulRequest<EventFilterModel> { RequestData = fireModel }).Result;
+            DisplayJson(events);
+            Assert.True(events.Data.Count == 1);
         }
 
         private static void RunStatusSamples()
