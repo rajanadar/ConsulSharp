@@ -36,7 +36,7 @@ namespace ConsulSharp.V1.ACL.Models
         /// After the initial sync, replica lag should be on the order of about 30 seconds.
         /// </summary>
         [JsonProperty("ReplicatedIndex")]
-        public int ReplicatedIndex { get; set; }
+        public long ReplicatedIndex { get; set; }
 
         /// <summary>
         /// The UTC time of the last successful sync operation. 

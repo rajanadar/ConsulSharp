@@ -47,12 +47,12 @@ namespace ConsulSharp.V1.Event.Models
         /// The version.
         /// </summary>
         [JsonProperty("Version")]
-        public int Version { get; set; }
+        public long Version { get; set; }
 
         /// <summary>
         /// The time.
         /// </summary>
         [JsonProperty("LTime")]
-        public int LTime { get; set; }
+        public long LTime { get; set; }
     }
 }

@@ -11,12 +11,12 @@ namespace ConsulSharp.V1.ACL.Models
         /// The create index.
         /// </summary>
         [JsonProperty("CreateIndex")]
-        public int CreateIndex { get; set; }
+        public long CreateIndex { get; set; }
 
         /// <summary>
         /// The modify index.
         /// </summary>
         [JsonProperty("ModifyIndex")]
-        public int ModifyIndex { get; set; }
+        public long ModifyIndex { get; set; }
     }
 }
