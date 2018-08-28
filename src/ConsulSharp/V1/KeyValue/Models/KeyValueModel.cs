@@ -11,7 +11,7 @@ namespace ConsulSharp.V1.KeyValue.Models
         /// The internal index value that represents when the entry was created.
         /// </summary>
         [JsonProperty("CreateIndex")]
-        public long CreateIndex { get; set; }
+        public string CreateIndex { get; set; }
 
         /// <summary>
         /// The last index that modified this key. 
@@ -22,14 +22,14 @@ namespace ConsulSharp.V1.KeyValue.Models
         /// using that ?index will wait until any key within that prefix is updated.
         /// </summary>
         [JsonProperty("ModifyIndex")]
-        public long ModifyIndex { get; set; }
+        public string ModifyIndex { get; set; }
 
         /// <summary>
         /// The number of times this key has successfully been acquired in a lock. 
         /// If the lock is held, the Session key provides the session that owns the lock.
         /// </summary>
         [JsonProperty("LockIndex")]
-        public long LockIndex { get; set; }
+        public string LockIndex { get; set; }
 
         /// <summary>
         /// Simply the full path of the entry.

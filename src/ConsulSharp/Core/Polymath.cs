@@ -64,7 +64,7 @@ namespace ConsulSharp.Core
                 {
                     if (request.Index != null)
                     {
-                        var kv = "index=" + request.Index.Value;
+                        var kv = "index=" + request.Index;
                         var joiner = resourcePath.Contains("?") ? "&" : "?";
 
                         resourcePath = resourcePath + joiner + kv;
@@ -91,11 +91,23 @@ namespace ConsulSharp.Core
                     }
                 }
 
+                byte[] dummyByteArray = new byte[1];
+
                 var requestUri = new Uri(_httpClient.BaseAddress, resourcePath);
 
-                var requestContent = requestData != null
-                    ? new StringContent((rawRequest ? requestData.ToString() : JsonConvert.SerializeObject(requestData)), Encoding.UTF8)
-                    : null;
+                HttpContent requestContent = null;
+
+                if (requestData != null)
+                {
+                    if (dummyByteArray.GetType() == requestData.GetType())
+                    {
+                        requestContent = new ByteArrayContent(requestData as byte[]);
+                    }
+                    else
+                    {
+                        requestContent = new StringContent((rawRequest ? requestData.ToString() : JsonConvert.SerializeObject(requestData)), Encoding.UTF8);
+                    }
+                }
 
                 HttpRequestMessage httpRequestMessage = null;
 
@@ -156,10 +168,6 @@ namespace ConsulSharp.Core
 
                 ConsulClientSettings.AfterApiResponseAction?.Invoke(httpResponseMessage);
 
-                var responseText =
-                    await
-                        httpResponseMessage.Content.ReadAsStringAsync().ConfigureAwait(ConsulClientSettings.ContinueAsyncTasksOnCapturedContext);
-
                 var response = new ConsulResponse<TResponseData>();
 
                 IEnumerable<string> values;
@@ -169,7 +177,7 @@ namespace ConsulSharp.Core
                     // for cross platform, use the iterator instead of linq stuff.
                     foreach(var value in values)
                     {
-                        response.Index = long.Parse(value, CultureInfo.InvariantCulture);
+                        response.Index = value;
                         break;
                     }
                 }
@@ -180,7 +188,7 @@ namespace ConsulSharp.Core
                 {
                     foreach (var value in values)
                     {
-                        response.LastContactMilliseconds = long.Parse(value);
+                        response.LastContactMilliseconds = value;
                         break;
                     }
                 }
@@ -198,15 +206,37 @@ namespace ConsulSharp.Core
 
                 if (httpResponseMessage.IsSuccessStatusCode)
                 {
-                    if (!string.IsNullOrWhiteSpace(responseText))
+                    if (rawResponse)
+                    { 
+                        if (typeof(TResponseData) == dummyByteArray.GetType())
+                        {
+                            dummyByteArray = await httpResponseMessage.Content.ReadAsByteArrayAsync().ConfigureAwait(ConsulClientSettings.ContinueAsyncTasksOnCapturedContext);
+                            response.Data = dummyByteArray as TResponseData;
+                        }
+                        else
+                        {
+                            var responseText = await httpResponseMessage.Content.ReadAsStringAsync().ConfigureAwait(ConsulClientSettings.ContinueAsyncTasksOnCapturedContext);
+
+                            if (!string.IsNullOrWhiteSpace(responseText))
+                            {
+                                response.Data = responseText as TResponseData;
+                            }
+                        }
+                    }
+                    else
                     {
-                        response.Data = rawResponse ? (responseText as TResponseData) : JsonConvert.DeserializeObject<TResponseData>(responseText);
+                        var responseText = await httpResponseMessage.Content.ReadAsStringAsync().ConfigureAwait(ConsulClientSettings.ContinueAsyncTasksOnCapturedContext);
+
+                        if (!string.IsNullOrWhiteSpace(responseText))
+                        {
+                            response.Data = JsonConvert.DeserializeObject<TResponseData>(responseText);
+                        }
                     }
 
                     return response;
                 }
 
-                throw new ConsulApiException(httpResponseMessage.StatusCode, responseText);
+                throw new ConsulApiException(httpResponseMessage.StatusCode, await httpResponseMessage.Content.ReadAsStringAsync().ConfigureAwait(ConsulClientSettings.ContinueAsyncTasksOnCapturedContext));
             }
             catch (WebException ex)
             {

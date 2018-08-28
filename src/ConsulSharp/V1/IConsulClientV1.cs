@@ -1,6 +1,7 @@
 ﻿using ConsulSharp.V1.ACL;
 using ConsulSharp.V1.Event;
 using ConsulSharp.V1.KeyValue;
+using ConsulSharp.V1.Snapshot;
 using ConsulSharp.V1.Status;
 
 namespace ConsulSharp.V1
@@ -24,6 +25,11 @@ namespace ConsulSharp.V1
         /// The KeyValue interface.
         /// </summary>
         IKeyValue KeyValue { get; }
+
+        /// <summary>
+        /// The Snapshot interface.
+        /// </summary>
+        ISnapshot Snapshot { get; }
 
         /// <summary>
         /// The Status interface.

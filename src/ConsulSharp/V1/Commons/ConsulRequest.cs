@@ -20,7 +20,7 @@
         /// <summary>
         /// Gets or sets the unique identifier representing the current state of the requested resource for blocking queries.
         /// </summary>
-        public long? Index { get; set; }
+        public string Index { get; set; }
 
         /// <summary>
         /// Gets or sets a maximum duration for the blocking request. 

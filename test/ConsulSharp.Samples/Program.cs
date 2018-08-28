@@ -8,6 +8,7 @@ using ConsulSharp.V1.ACL.Models;
 using ConsulSharp.V1.Commons;
 using ConsulSharp.V1.Event.Models;
 using ConsulSharp.V1.KeyValue.Models;
+using ConsulSharp.V1.Snapshot.Models;
 using Newtonsoft.Json;
 using Xunit;
 
@@ -87,7 +88,26 @@ namespace ConsulSharp.Samples
             RunAclSamples();
             RunEventSamples();
             RunKeyValueSamples();
+            RunSnapshotSamples();
             RunStatusSamples();
+        }
+
+        private static void RunSnapshotSamples()
+        {
+            output.AppendLine("\n Snapshot Samples \n");
+
+            var snapshot = _consulClient.V1.Snapshot.GenerateAsync().Result;
+            DisplayJson(snapshot);
+            Assert.NotNull(snapshot.Data);
+
+            var restore = new ConsulRequest<SnapshotRestoreModel>
+            {
+                RequestData = new SnapshotRestoreModel { Snapshot = snapshot.Data }
+            };
+
+            var restoreResponse = _consulClient.V1.Snapshot.RestoreAsync(restore).Result;
+            DisplayJson(restoreResponse);
+            Assert.NotNull(restoreResponse);
         }
 
         private static void RunEventSamples()

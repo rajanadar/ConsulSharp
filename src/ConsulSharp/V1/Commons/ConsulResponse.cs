@@ -5,41 +5,21 @@ namespace ConsulSharp.V1.Commons
     /// <summary>
     /// Represents a Consul response.
     /// </summary>
-    /// <typeparam name="TResponseData">The type of the data contained in the response.</typeparam>
-    public class ConsulResponse<TResponseData>
+    public class ConsulResponse
     {
         /// <summary>
         /// Gets or sets the time in milliseconds that a server was last contacted by the leader node.
         /// </summary>
-        public long? Index { get; set; }
+        public string Index { get; set; }
 
         /// <summary>
         /// Gets or sets the unique identifier representing the current state of the requested resource for blocking queries.
         /// </summary>
-        public long LastContactMilliseconds { get; set; }
+        public string LastContactMilliseconds { get; set; }
 
         /// <summary>
         /// Gets or sets the known leader.
         /// </summary>
         public bool? KnownLeader { get; set; }
-
-        /// <summary>
-        /// Gets or sets the response data.
-        /// </summary>
-        /// <value>
-        /// The data.
-        /// </value>
-        public TResponseData Data { get; set; }
-
-        internal ConsulResponse<T2> Map<T2>(Func<T2> func)
-        {
-            return new ConsulResponse<T2>
-            {
-                Index = this.Index,
-                KnownLeader = this.KnownLeader,
-                LastContactMilliseconds = this.LastContactMilliseconds,
-                Data = func != null ? func() : default(T2)
-            };
-        }
     }
 }
