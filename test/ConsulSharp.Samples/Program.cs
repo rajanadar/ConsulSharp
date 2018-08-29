@@ -9,6 +9,7 @@ using ConsulSharp.V1.ACL.Models;
 using ConsulSharp.V1.Commons;
 using ConsulSharp.V1.Event.Models;
 using ConsulSharp.V1.KeyValue.Models;
+using ConsulSharp.V1.Session.Models;
 using ConsulSharp.V1.Snapshot.Models;
 using ConsulSharp.V1.Transaction.Models;
 using Newtonsoft.Json;
@@ -90,9 +91,76 @@ namespace ConsulSharp.Samples
             RunAclSamples();
             RunEventSamples();
             RunKeyValueSamples();
+            RunSessionSamples();
             RunSnapshotSamples();
             RunStatusSamples();
             RunTransactionSamples();
+        }
+
+        private static void RunSessionSamples()
+        {
+            output.AppendLine("\n Session Samples \n");
+
+            var req = new SessionRequestModel
+            {
+                LockDelay = "30m",
+                Name = "raja-session",
+                Checks = new List<string> { "serfHealth" },
+                TimeToLive = "29m",
+                Node = Environment.MachineName
+            };
+
+            var create = _consulClient.V1.Session.CreateAsync(new ConsulRequest<SessionRequestModel> { RequestData = req }).Result;
+            DisplayJson(create);
+            Assert.NotNull(create.Data);
+
+            var reads = _consulClient.V1.Session.ReadAsync(new ConsulRequest<SessionReadModel>
+            {
+                RequestData = new SessionReadModel
+                {
+                    SessionId = create.Data
+                }
+            }).Result;
+            DisplayJson(reads);
+            Assert.True(reads.Data.Count == 1);
+            Assert.True(reads.Data[0].SessionId == create.Data);
+
+            var nodereads = _consulClient.V1.Session.ReadNodeSessionsAsync(new ConsulRequest<NodeSessionReadModel>
+            {
+                RequestData = new NodeSessionReadModel
+                {
+                    Node = reads.Data[0].Node
+                }
+            }).Result;
+            DisplayJson(nodereads);
+            Assert.True(nodereads.Data.Count == 1);
+            Assert.True(nodereads.Data[0].SessionId == create.Data);
+
+            var allsessions = _consulClient.V1.Session.ListAsync().Result;
+            DisplayJson(allsessions);
+            Assert.True(allsessions.Data.Count == 1);
+            Assert.True(allsessions.Data[0].SessionId == create.Data);
+
+            var renew = _consulClient.V1.Session.RenewAsync(new ConsulRequest<RenewSessionRequestModel>
+            {
+                RequestData = new RenewSessionRequestModel
+                {
+                    SessionId = create.Data                   
+                }
+            }).Result;
+            DisplayJson(renew);
+            Assert.True(renew.Data.Count == 1);
+            Assert.True(renew.Data[0].SessionId == create.Data);
+
+            var delete = _consulClient.V1.Session.DeleteAsync(new ConsulRequest<SessionDeleteModel>
+            {
+                RequestData = new SessionDeleteModel
+                {
+                    SessionId = create.Data
+                }
+            }).Result;
+            DisplayJson(delete);
+            Assert.True(delete.Data);
         }
 
         private static void RunTransactionSamples()

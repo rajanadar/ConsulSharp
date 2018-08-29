@@ -11,7 +11,7 @@ namespace ConsulSharp.V1.Snapshot.Models
         /// <summary>
         /// Specifies the datacenter to query. This will default to the datacenter of the agent being queried.
         /// </summary>
-        public string Datacenter { get; set; }
+        public string DataCenter { get; set; }
 
         /// <summary>
         /// Specifies that any follower may reply. 
@@ -29,9 +29,9 @@ namespace ConsulSharp.V1.Snapshot.Models
         {
             var list = new List<string>();
 
-            if (!string.IsNullOrWhiteSpace(Datacenter))
+            if (!string.IsNullOrWhiteSpace(DataCenter))
             {
-                list.Add("dc=" + Datacenter);
+                list.Add("dc=" + DataCenter);
             }
             
             if (Stale)

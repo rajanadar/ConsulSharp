@@ -2,6 +2,7 @@
 using ConsulSharp.V1.ACL;
 using ConsulSharp.V1.Event;
 using ConsulSharp.V1.KeyValue;
+using ConsulSharp.V1.Session;
 using ConsulSharp.V1.Snapshot;
 using ConsulSharp.V1.Status;
 using ConsulSharp.V1.Transaction;
@@ -15,6 +16,7 @@ namespace ConsulSharp.V1
             ACL = new ACLProvider(polymath);
             Event = new EventProvider(polymath);
             KeyValue = new KeyValueProvider(polymath);
+            Session = new SessionProvider(polymath);
             Snapshot = new SnapshotProvider(polymath);
             Status = new StatusProvider(polymath);
             Transaction = new TransactionProvider(polymath);
@@ -25,6 +27,8 @@ namespace ConsulSharp.V1
         public IEvent Event { get; }
 
         public IKeyValue KeyValue { get; }
+
+        public ISession Session { get; }
 
         public ISnapshot Snapshot { get; }
 

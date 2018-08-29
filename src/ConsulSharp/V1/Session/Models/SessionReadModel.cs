@@ -1,21 +1,24 @@
 ﻿using System.Collections.Generic;
+using Newtonsoft.Json;
 
-namespace ConsulSharp.V1.Snapshot.Models
+namespace ConsulSharp.V1.Session.Models
 {
     /// <summary>
-    /// Restore snapshot.
+    /// The session read model.
     /// </summary>
-    public class SnapshotRestoreModel
+    public class SessionReadModel
     {
         /// <summary>
-        /// Specifies the datacenter to query. This will default to the datacenter of the agent being queried.
+        /// Specifies the datacenter to query. 
+        /// This will default to the datacenter of the agent being queried.
+        /// Using this across datacenters is not recommended.
         /// </summary>
         public string DataCenter { get; set; }
 
         /// <summary>
-        /// A snapshot archive byte array.
+        /// Specifies the UUID of the session to read.
         /// </summary>
-        public byte[] Snapshot { get; set; }
+        public string SessionId { get; set; }
 
         internal string ToQueryString()
         {

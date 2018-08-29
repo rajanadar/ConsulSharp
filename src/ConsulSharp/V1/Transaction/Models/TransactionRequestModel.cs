@@ -10,7 +10,7 @@ namespace ConsulSharp.V1.Transaction.Models
         /// <summary>
         /// Specifies the datacenter. This will default to the datacenter of the agent being queried.
         /// </summary>
-        public string Datacenter { get; set; }
+        public string DataCenter { get; set; }
 
         /// <summary>
         /// The Transaction Operations.
@@ -21,9 +21,9 @@ namespace ConsulSharp.V1.Transaction.Models
         {
             var list = new List<string>();
 
-            if (!string.IsNullOrWhiteSpace(Datacenter))
+            if (!string.IsNullOrWhiteSpace(DataCenter))
             {
-                list.Add("dc=" + Datacenter);
+                list.Add("dc=" + DataCenter);
             }
 
             if (list.Count > 0)
