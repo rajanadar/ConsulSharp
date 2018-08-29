@@ -44,7 +44,7 @@ namespace ConsulSharp.Core
             await MakeConsulApiRequest<JToken>(request, resourcePath, httpMethod, requestData, rawRequest, rawResponse, unauthenticated: unauthenticated);
         }
 
-        public async Task<ConsulResponse<TResponseData>> MakeConsulApiRequest<TResponseData>(ConsulRequest request, string resourcePath, HttpMethod httpMethod, object requestData = null, bool rawRequest = false, bool rawResponse = false, Action<HttpResponseMessage> postResponseAction = null, bool unauthenticated = false) where TResponseData : class
+        public async Task<ConsulResponse<TResponseData>> MakeConsulApiRequest<TResponseData>(ConsulRequest request, string resourcePath, HttpMethod httpMethod, object requestData = null, bool rawRequest = false, bool rawResponse = false, Func<HttpResponseMessage, bool> postResponseFunc = null, bool unauthenticated = false) where TResponseData : class
         {
             var headers = new Dictionary<string, string>();
 
@@ -53,10 +53,10 @@ namespace ConsulSharp.Core
                 headers.Add(ConsulTokenHeaderKey, ConsulClientSettings.ConsulToken);
             }
 
-            return await MakeRequestAsync<TResponseData>(request, resourcePath, httpMethod, requestData, headers, rawRequest, rawResponse, postResponseAction).ConfigureAwait(ConsulClientSettings.ContinueAsyncTasksOnCapturedContext);
+            return await MakeRequestAsync<TResponseData>(request, resourcePath, httpMethod, requestData, headers, rawRequest, rawResponse, postResponseFunc).ConfigureAwait(ConsulClientSettings.ContinueAsyncTasksOnCapturedContext);
         }
 
-        private async Task<ConsulResponse<TResponseData>> MakeRequestAsync<TResponseData>(ConsulRequest request, string resourcePath, HttpMethod httpMethod, object requestData = null, IDictionary<string, string> headers = null, bool rawRequest = false, bool rawResponse = false, Action<HttpResponseMessage> postResponseAction = null) where TResponseData : class
+        private async Task<ConsulResponse<TResponseData>> MakeRequestAsync<TResponseData>(ConsulRequest request, string resourcePath, HttpMethod httpMethod, object requestData = null, IDictionary<string, string> headers = null, bool rawRequest = false, bool rawResponse = false, Func<HttpResponseMessage, bool> postResponseFunc = null) where TResponseData : class
         {
             try
             {
@@ -64,7 +64,7 @@ namespace ConsulSharp.Core
                 {
                     if (request.Index != null)
                     {
-                        var kv = "index=" + request.Index;
+                        var kv = "index=" + request.Index.Value;
                         var joiner = resourcePath.Contains("?") ? "&" : "?";
 
                         resourcePath = resourcePath + joiner + kv;
@@ -163,11 +163,6 @@ namespace ConsulSharp.Core
 
                 var httpResponseMessage = await _httpClient.SendAsync(httpRequestMessage).ConfigureAwait(ConsulClientSettings.ContinueAsyncTasksOnCapturedContext);
 
-                // internal delegate.
-                postResponseAction?.Invoke(httpResponseMessage);
-
-                ConsulClientSettings.AfterApiResponseAction?.Invoke(httpResponseMessage);
-
                 var response = new ConsulResponse<TResponseData>();
 
                 IEnumerable<string> values;
@@ -177,7 +172,7 @@ namespace ConsulSharp.Core
                     // for cross platform, use the iterator instead of linq stuff.
                     foreach(var value in values)
                     {
-                        response.Index = value;
+                        response.Index = ulong.Parse(value);
                         break;
                     }
                 }
@@ -188,7 +183,7 @@ namespace ConsulSharp.Core
                 {
                     foreach (var value in values)
                     {
-                        response.LastContactMilliseconds = value;
+                        response.LastContactMilliseconds = ulong.Parse(value);
                         break;
                     }
                 }
@@ -204,7 +199,9 @@ namespace ConsulSharp.Core
                     }
                 }
 
-                if (httpResponseMessage.IsSuccessStatusCode)
+                ConsulClientSettings.AfterApiResponseAction?.Invoke(httpResponseMessage);
+
+                if (httpResponseMessage.IsSuccessStatusCode || (postResponseFunc?.Invoke(httpResponseMessage) == true))
                 {
                     if (rawResponse)
                     { 

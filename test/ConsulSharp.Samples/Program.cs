@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Net;
 using System.Text;
@@ -9,6 +10,7 @@ using ConsulSharp.V1.Commons;
 using ConsulSharp.V1.Event.Models;
 using ConsulSharp.V1.KeyValue.Models;
 using ConsulSharp.V1.Snapshot.Models;
+using ConsulSharp.V1.Transaction.Models;
 using Newtonsoft.Json;
 using Xunit;
 
@@ -90,6 +92,45 @@ namespace ConsulSharp.Samples
             RunKeyValueSamples();
             RunSnapshotSamples();
             RunStatusSamples();
+            RunTransactionSamples();
+        }
+
+        private static void RunTransactionSamples()
+        {
+            output.AppendLine("\n Transaction Samples \n");
+
+            var genericOperation = new GenericTransactionOperation("KV");
+            genericOperation.Add("KV", new Dictionary<string, object>
+            {
+                { "Value", "val2" },
+                { "Key", "tr2" },
+                { "Verb", "set" },
+                { "Flags", 64 },
+            });
+
+            var txnRequest = new TransactionRequestModel
+            {
+                Operations = new List<ITransactionOperation>
+                {
+                    new KeyValueTransactionOperation
+                    {
+                        KeyValueOperation = new KeyValueOperation
+                        {
+                            Base64EncodedValue = "raja",
+                            Flags = 32,
+                            Index = 2233,
+                            Key = "tr",
+                            Session = "abc",
+                            Verb = OperationVerbs.Set
+                        }
+                    },
+                    genericOperation
+                }
+            };
+
+            var results = _consulClient.V1.Transaction.CreateAsync(new ConsulRequest<TransactionRequestModel> { RequestData = txnRequest }).Result;
+            DisplayJson(results);
+            Assert.True(results.Data.Results.Count == 2);
         }
 
         private static void RunSnapshotSamples()

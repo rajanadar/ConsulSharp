@@ -3,6 +3,7 @@ using ConsulSharp.V1.Event;
 using ConsulSharp.V1.KeyValue;
 using ConsulSharp.V1.Snapshot;
 using ConsulSharp.V1.Status;
+using ConsulSharp.V1.Transaction;
 
 namespace ConsulSharp.V1
 {
@@ -35,5 +36,10 @@ namespace ConsulSharp.V1
         /// The Status interface.
         /// </summary>
         IStatus Status { get; }
+
+        /// <summary>
+        /// The Transaction interface.
+        /// </summary>
+        ITransaction Transaction { get; }
     }
 }

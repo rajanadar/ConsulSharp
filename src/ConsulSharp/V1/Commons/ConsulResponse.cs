@@ -10,12 +10,12 @@ namespace ConsulSharp.V1.Commons
         /// <summary>
         /// Gets or sets the time in milliseconds that a server was last contacted by the leader node.
         /// </summary>
-        public string Index { get; set; }
+        public ulong Index { get; set; }
 
         /// <summary>
         /// Gets or sets the unique identifier representing the current state of the requested resource for blocking queries.
         /// </summary>
-        public string LastContactMilliseconds { get; set; }
+        public ulong LastContactMilliseconds { get; set; }
 
         /// <summary>
         /// Gets or sets the known leader.

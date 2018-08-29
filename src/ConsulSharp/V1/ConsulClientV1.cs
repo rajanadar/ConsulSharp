@@ -4,6 +4,7 @@ using ConsulSharp.V1.Event;
 using ConsulSharp.V1.KeyValue;
 using ConsulSharp.V1.Snapshot;
 using ConsulSharp.V1.Status;
+using ConsulSharp.V1.Transaction;
 
 namespace ConsulSharp.V1
 {
@@ -16,6 +17,7 @@ namespace ConsulSharp.V1
             KeyValue = new KeyValueProvider(polymath);
             Snapshot = new SnapshotProvider(polymath);
             Status = new StatusProvider(polymath);
+            Transaction = new TransactionProvider(polymath);
         }
 
         public IACL ACL { get; }
@@ -27,5 +29,7 @@ namespace ConsulSharp.V1
         public ISnapshot Snapshot { get; }
 
         public IStatus Status { get; }
+
+        public ITransaction Transaction { get; }
     }
 }
