@@ -34,6 +34,41 @@
         public string Wait { get; set; }
 
         /// <summary>
+        /// A filter expression is used to refine a data query for some API listing 
+        /// endpoints as notated in the individual API documentation. 
+        /// Filtering will be executed on the Consul server before data is returned, 
+        /// reducing the network load. 
+        /// </summary>
+        public string FilterExpression { get; set; }
+
+        /// <summary>
+        /// Last hash header value seen
+        /// </summary>
+        public string ContentHash { get; set; }
+
+        /// <summary>
+        /// Used to enable cached responses.
+        /// </summary>
+        public bool? Cached { get; set; }
+
+        /// <summary>
+        /// Used to request better freshness of data.
+        /// </summary>
+        public int? CacheControlMaxAgeSeconds { get; set; }
+
+        /// <summary>
+        /// Allows clients to maintain fresh results in normal operation but allow stale ones 
+        /// if the servers are unavailable.
+        /// </summary>
+        public int? CacheControlStaleIfErrorSeconds { get; set; }
+
+        /// <summary>
+        /// Allows clients to have always-fresh results yet keeping the 
+        /// cache populated with the most recent result.
+        /// </summary>
+        public bool? CacheControlMustRevalidate { get; set; }
+
+        /// <summary>
         /// Gets or sets a flag indicating if the response json should be pretty.
         /// </summary>
         public bool PrettyJsonResponse { get; set; }

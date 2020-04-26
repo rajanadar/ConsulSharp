@@ -16,6 +16,14 @@ using Newtonsoft.Json;
 using Xunit;
 
 /*
+ * raja todo
+ * 
+ * 1. adding cache related request response to common POCOs
+ * 2. 
+ * 
+ */
+
+/*
  * Before running these samples:
  * 1. create a data dir and config dir
  * 2. add the following config file in the config dir
@@ -38,7 +46,7 @@ namespace ConsulSharp.Samples
 {
     class Program
     {
-        private const string ExpectedConsulVersion = "1.2.2";
+        private const string ExpectedConsulVersion = "1.7.2";
 
         private static string _responseContent;
         private static IConsulClient _consulClient;
@@ -59,7 +67,7 @@ namespace ConsulSharp.Samples
             }
             finally
             {
-                File.WriteAllText(path, output.ToString());
+                File.WriteAllText(path, output.ToString(), Encoding.UTF8);
         
                 Console.WriteLine();
                 Console.Write("I think we are done here. Press any key to exit...");

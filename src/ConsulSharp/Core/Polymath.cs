@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Globalization;
 using System.IO;
+using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Text;
@@ -14,10 +14,15 @@ namespace ConsulSharp.Core
 {
     internal class Polymath
     {
-        private const string ConsulTokenHeaderKey = "X-Consul-Token";
+        private const string AuthorizationHeaderKey = "Authorization"; 
+
         private const string ConsulIndexHeaderKey = "X-Consul-Index";
         private const string ConsulLastContactHeaderKey = "X-Consul-LastContact";
         private const string ConsulKnownLeaderHeaderKey = "X-Consul-KnownLeader";
+
+        private const string ConsulContentHashHeaderKey = "X-Consul-ContentHash";
+        private const string CacheHeaderKey = "X-Cache";
+        private const string AgeHeaderKey = "Age";
 
         private readonly HttpClient _httpClient;
 
@@ -50,7 +55,29 @@ namespace ConsulSharp.Core
 
             if (!unauthenticated)
             {
-                headers.Add(ConsulTokenHeaderKey, ConsulClientSettings.ConsulToken);
+                headers.Add(AuthorizationHeaderKey, "Bearer " + ConsulClientSettings.ConsulToken);
+            }
+
+            var cacheParams = new List<string>(3);
+
+            if (request.CacheControlMaxAgeSeconds != null)
+            {
+                cacheParams.Add("max-age=" + request.CacheControlMaxAgeSeconds.Value);
+            }
+
+            if (request.CacheControlStaleIfErrorSeconds != null)
+            {
+                cacheParams.Add("stale-if-error=" + request.CacheControlStaleIfErrorSeconds.Value);
+            }
+
+            if (request.CacheControlMustRevalidate == true)
+            {
+                cacheParams.Add("must-revalidate");
+            }
+
+            if (cacheParams.Any())
+            { 
+                headers.Add("Cache-Control", string.Join(" ", cacheParams));
             }
 
             return await MakeRequestAsync<TResponseData>(request, resourcePath, httpMethod, requestData, headers, rawRequest, rawResponse, postResponseFunc).ConfigureAwait(ConsulClientSettings.ContinueAsyncTasksOnCapturedContext);
@@ -82,6 +109,28 @@ namespace ConsulSharp.Core
                     {
                         var joiner = resourcePath.Contains("?") ? "&" : "?";
                         resourcePath = resourcePath + joiner + request.ConsistencyMode.ToString();
+                    }
+
+                    if (!string.IsNullOrWhiteSpace(request.ContentHash))
+                    {
+                        var kv = "hash=" + request.ContentHash;
+                        var joiner = resourcePath.Contains("?") ? "&" : "?";
+
+                        resourcePath = resourcePath + joiner + kv;
+                    }
+
+                    if (!string.IsNullOrWhiteSpace(request.FilterExpression))
+                    {
+                        var kv = "filter=" + request.FilterExpression;
+                        var joiner = resourcePath.Contains("?") ? "&" : "?";
+
+                        resourcePath = resourcePath + joiner + kv;
+                    }
+
+                    if (request.Cached == true)
+                    {
+                        var joiner = resourcePath.Contains("?") ? "&" : "?";
+                        resourcePath = resourcePath + joiner + "cached";
                     }
 
                     if (request.PrettyJsonResponse)
@@ -196,6 +245,42 @@ namespace ConsulSharp.Core
                     {
                         response.KnownLeader = bool.Parse(value);
                         break;
+                    }
+                }
+
+                values = null;
+
+                if (httpResponseMessage.Headers.TryGetValues(ConsulContentHashHeaderKey, out values) && values != null)
+                {
+                    foreach (var value in values)
+                    {
+                        response.ContentHash = value;
+                        break;
+                    }
+                }
+
+                values = null;
+
+                if (httpResponseMessage.Headers.TryGetValues(CacheHeaderKey, out values) && values != null)
+                {
+                    foreach (var value in values)
+                    {
+                        response.CacheAction = value;
+                        break;
+                    }
+                }
+
+                values = null;
+
+                if (httpResponseMessage.Headers.TryGetValues(AgeHeaderKey, out values) && values != null)
+                {
+                    foreach (var value in values)
+                    {
+                        if (int.TryParse(value, out var intValue))
+                        {
+                            response.CacheHitAgeSeconds = intValue;
+                            break;
+                        }
                     }
                 }
 
