@@ -45,7 +45,7 @@ namespace ConsulSharp.V1.ACL.LegacyToken
             return jtokenResponse.Map(() => jtokenResponse.Data["ID"].Value<string>());
         }
 
-        public async Task<ConsulResponse<List<TokenModel>>> ListTokensAsync(ConsulRequest request = null)
+        public async Task<ConsulResponse<List<TokenModel>>> ListAllTokensAsync(ConsulRequest request = null)
         {
             return await _polymath.MakeConsulApiRequest<List<TokenModel>>(request, "v1/acl/list", HttpMethod.Get).ConfigureAwait(_polymath.ConsulClientSettings.ContinueAsyncTasksOnCapturedContext);
         }

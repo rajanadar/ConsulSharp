@@ -47,6 +47,6 @@ namespace ConsulSharp.V1.ACL.LegacyToken
         /// </summary>
         /// <param name="request">The request.</param>
         /// <returns>The list of tokens.</returns>
-        Task<ConsulResponse<List<TokenModel>>> ListTokensAsync(ConsulRequest request = null);
+        Task<ConsulResponse<List<TokenModel>>> ListAllTokensAsync(ConsulRequest request = null);
     }
 }
