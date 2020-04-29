@@ -19,7 +19,7 @@ namespace ConsulSharp.V1.ACL
         /// This provides a mechanism to bootstrap ACLs without having any secrets present in Consul's configuration files.
         /// </summary>
         /// <returns>The Id of the management token.</returns>
-        Task<ConsulResponse<string>> BootstrapAsync(ConsulRequest request = null);
+        Task<ConsulResponse<BootstrapResponse>> BootstrapAsync(ConsulRequest request = null);
 
         /// <summary>
         /// Makes a new ACL token.

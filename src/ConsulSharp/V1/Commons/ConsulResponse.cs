@@ -8,14 +8,14 @@ namespace ConsulSharp.V1.Commons
     public class ConsulResponse
     {
         /// <summary>
-        /// Gets or sets the time in milliseconds that a server was last contacted by the leader node.
-        /// </summary>
-        public ulong Index { get; set; }
-
-        /// <summary>
         /// Gets or sets the unique identifier representing the current state of the requested resource for blocking queries.
         /// </summary>
-        public ulong LastContactMilliseconds { get; set; }
+        public ulong? Index { get; set; }
+
+        /// <summary>
+        /// Gets or sets the time in milliseconds that a server was last contacted by the leader node.
+        /// </summary>
+        public ulong? LastContactMilliseconds { get; set; }
 
         /// <summary>
         /// Gets or sets the known leader.

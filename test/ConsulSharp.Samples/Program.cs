@@ -325,7 +325,7 @@ namespace ConsulSharp.Samples
             DisplayJson(managementTokenResponse);
             Assert.NotNull(managementTokenResponse.Data);
 
-            _managementToken = managementTokenResponse.Data;
+            _managementToken = managementTokenResponse.Data.SecretId;
             _consulClient = new ConsulClient(new ConsulClientSettings("http://127.0.0.1:8500", _managementToken)
             {
                 AfterApiResponseAction = r =>

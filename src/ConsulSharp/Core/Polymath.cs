@@ -67,26 +67,29 @@ namespace ConsulSharp.Core
                 }
             }
 
-            var cacheParams = new List<string>(3);
-
-            if (request.CacheControlMaxAgeSeconds != null)
+            if (request != null)
             {
-                cacheParams.Add("max-age=" + request.CacheControlMaxAgeSeconds.Value);
-            }
+                var cacheParams = new List<string>(3);
 
-            if (request.CacheControlStaleIfErrorSeconds != null)
-            {
-                cacheParams.Add("stale-if-error=" + request.CacheControlStaleIfErrorSeconds.Value);
-            }
+                if (request.CacheControlMaxAgeSeconds != null)
+                {
+                    cacheParams.Add("max-age=" + request.CacheControlMaxAgeSeconds.Value);
+                }
 
-            if (request.CacheControlMustRevalidate == true)
-            {
-                cacheParams.Add("must-revalidate");
-            }
+                if (request.CacheControlStaleIfErrorSeconds != null)
+                {
+                    cacheParams.Add("stale-if-error=" + request.CacheControlStaleIfErrorSeconds.Value);
+                }
 
-            if (cacheParams.Any())
-            { 
-                headers.Add("Cache-Control", string.Join(" ", cacheParams));
+                if (request.CacheControlMustRevalidate == true)
+                {
+                    cacheParams.Add("must-revalidate");
+                }
+
+                if (cacheParams.Any())
+                {
+                    headers.Add("Cache-Control", string.Join(" ", cacheParams));
+                }
             }
 
             return await MakeRequestAsync<TResponseData>(request, resourcePath, httpMethod, requestData, headers, rawRequest, rawResponse, postResponseFunc).ConfigureAwait(ConsulClientSettings.ContinueAsyncTasksOnCapturedContext);

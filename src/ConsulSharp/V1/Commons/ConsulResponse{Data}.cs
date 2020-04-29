@@ -23,7 +23,10 @@ namespace ConsulSharp.V1.Commons
                 Index = this.Index,
                 KnownLeader = this.KnownLeader,
                 LastContactMilliseconds = this.LastContactMilliseconds,
-                Data = func != null ? func() : default(T2)
+                Data = func != null ? func() : default(T2),
+                CacheAction = CacheAction,
+                CacheHitAgeSeconds = CacheHitAgeSeconds,
+                ContentHash = ContentHash
             };
         }
     }

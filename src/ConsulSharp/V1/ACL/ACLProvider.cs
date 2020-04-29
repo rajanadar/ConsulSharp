@@ -17,10 +17,9 @@ namespace ConsulSharp.V1.ACL
             _polymath = polymath;
         }
 
-        public async Task<ConsulResponse<string>> BootstrapAsync(ConsulRequest request = null)
+        public async Task<ConsulResponse<BootstrapResponse>> BootstrapAsync(ConsulRequest request = null)
         {
-            var jtokenResponse = await _polymath.MakeConsulApiRequest<JToken>(request, "v1/acl/bootstrap", HttpMethod.Put).ConfigureAwait(_polymath.ConsulClientSettings.ContinueAsyncTasksOnCapturedContext);
-            return jtokenResponse.Map(() => jtokenResponse.Data["ID"].Value<string>());
+            return await _polymath.MakeConsulApiRequest<BootstrapResponse>(request, "v1/acl/bootstrap", HttpMethod.Put).ConfigureAwait(_polymath.ConsulClientSettings.ContinueAsyncTasksOnCapturedContext);
         }
 
         public async Task<ConsulResponse<string>> CreateTokenAsync(ConsulRequest<TokenRequestModel> request)
