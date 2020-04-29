@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
 using ConsulSharp.V1.ACL.LegacyToken;
+using ConsulSharp.V1.ACL.Token;
 using ConsulSharp.V1.Commons;
 
 namespace ConsulSharp.V1.ACL
@@ -56,8 +57,16 @@ namespace ConsulSharp.V1.ACL
         /// Consul 1.4.0 deprecates the legacy ACL system completely. 
         /// It's strongly recommended you do not build anything using the legacy system 
         /// and consider using the new ACL Token and Policy APIs instead.
+        /// Acl.Token and Acl.Policy
         /// </summary>
         [Obsolete]
         ILegacyToken LegacyToken { get; }
+
+        /// <summary>
+        /// Consul 1.4.0 deprecates the legacy ACL system completely. 
+        /// It's strongly recommended you do not build anything using the legacy system 
+        /// and consider using the new ACL Token and Policy APIs instead.
+        /// </summary>
+        IToken Token { get; }
     }
 }

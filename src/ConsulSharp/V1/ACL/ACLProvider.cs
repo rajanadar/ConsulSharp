@@ -3,6 +3,7 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using ConsulSharp.Core;
 using ConsulSharp.V1.ACL.LegacyToken;
+using ConsulSharp.V1.ACL.Token;
 using ConsulSharp.V1.Commons;
 
 namespace ConsulSharp.V1.ACL
@@ -13,11 +14,14 @@ namespace ConsulSharp.V1.ACL
 
         public ILegacyToken LegacyToken { get; }
 
+        public IToken Token { get; }
+
         public ACLProvider(Polymath polymath)
         {
             _polymath = polymath;
 
             LegacyToken = new LegacyTokenProvider(polymath);
+            Token = new TokenProvider(polymath);
         }
 
         public async Task<ConsulResponse<BootstrapResponse>> BootstrapAsync(ConsulRequest request = null)
@@ -44,7 +48,7 @@ namespace ConsulSharp.V1.ACL
             Checker.NotNull(request, nameof(request));
             Checker.NotNull(request.RequestData, nameof(request.RequestData));
 
-            await _polymath.MakeConsulApiRequest(request, "v1/acl/logout", HttpMethod.Post, unauthenticated: true, preHeaders: new Dictionary<string, string> { { Polymath.ConsulTokenHeaderKey, request.RequestData } }).ConfigureAwait(_polymath.ConsulClientSettings.ContinueAsyncTasksOnCapturedContext);
+            await _polymath.MakeConsulApiRequest(request, "v1/acl/logout", HttpMethod.Post, unauthenticated: true, consulToken: request.RequestData).ConfigureAwait(_polymath.ConsulClientSettings.ContinueAsyncTasksOnCapturedContext);
         }
     }
 }

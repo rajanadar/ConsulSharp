@@ -25,6 +25,8 @@ namespace ConsulSharp.Core
         private const string CacheHeaderKey = "X-Cache";
         private const string AgeHeaderKey = "Age";
 
+        public const string ConsulNamespaceHeaderKey = "X-Consul-Namespace";
+
         private readonly HttpClient _httpClient;
 
         public ConsulClientSettings ConsulClientSettings { get; }
@@ -46,32 +48,50 @@ namespace ConsulSharp.Core
             }
         }
 
-        public async Task MakeConsulApiRequest(ConsulRequest request, string resourcePath, HttpMethod httpMethod, object requestData = null, bool rawRequest = false, bool rawResponse = false, bool unauthenticated = false, IDictionary<string, string> preHeaders = null)
+        public async Task MakeConsulApiRequest(ConsulRequest request, string resourcePath, HttpMethod httpMethod, object requestData = null, bool rawRequest = false, bool rawResponse = false, bool unauthenticated = false, string consulToken = null)
         {
-            await MakeConsulApiRequest<JToken>(request, resourcePath, httpMethod, requestData, rawRequest, rawResponse, unauthenticated: unauthenticated, preHeaders: preHeaders);
+            await MakeConsulApiRequest<JToken>(request, resourcePath, httpMethod, requestData, rawRequest, rawResponse, unauthenticated: unauthenticated, consulToken: consulToken);
         }
 
-        public async Task<ConsulResponse<TResponseData>> MakeConsulApiRequest<TResponseData>(ConsulRequest request, string resourcePath, HttpMethod httpMethod, object requestData = null, bool rawRequest = false, bool rawResponse = false, Func<HttpResponseMessage, bool> postResponseFunc = null, bool unauthenticated = false, IDictionary<string, string> preHeaders = null) where TResponseData : class
+        public async Task<ConsulResponse<TResponseData>> MakeConsulApiRequest<TResponseData>(ConsulRequest request, string resourcePath, HttpMethod httpMethod, object requestData = null, bool rawRequest = false, bool rawResponse = false, Func<HttpResponseMessage, bool> postResponseFunc = null, bool unauthenticated = false, string consulToken = null) where TResponseData : class
         {
             var headers = new Dictionary<string, string>();
 
-            if (preHeaders != null && preHeaders.Any())
-            {
-                foreach (var item in preHeaders)
-                {
-                    headers.Add(item.Key, item.Value);
-                }
-            }
-
-            if (!unauthenticated)
+            if (!string.IsNullOrWhiteSpace(consulToken))
             {
                 if (ConsulClientSettings.UseConsulTokenHeaderInsteadOfAuthorizationHeader)
                 {
-                    headers.Add(ConsulTokenHeaderKey, ConsulClientSettings.ConsulToken);
+                    headers.Add(ConsulTokenHeaderKey, consulToken);
                 }
                 else
                 {
-                    headers.Add(AuthorizationHeaderKey, "Bearer " + ConsulClientSettings.ConsulToken);
+                    headers.Add(AuthorizationHeaderKey, "Bearer " + consulToken);
+                }
+            }
+            else
+            {
+                if (!unauthenticated)
+                {
+                    if (ConsulClientSettings.UseConsulTokenHeaderInsteadOfAuthorizationHeader)
+                    {
+                        headers.Add(ConsulTokenHeaderKey, ConsulClientSettings.ConsulToken);
+                    }
+                    else
+                    {
+                        headers.Add(AuthorizationHeaderKey, "Bearer " + ConsulClientSettings.ConsulToken);
+                    }
+                }
+            }
+
+            if (!string.IsNullOrWhiteSpace(request?.PerRequestNamespace))
+            {
+                headers.Add(ConsulNamespaceHeaderKey, request.PerRequestNamespace);
+            }
+            else
+            {
+                if (!string.IsNullOrWhiteSpace(ConsulClientSettings.GlobalNamespace))
+                {
+                    headers.Add(ConsulNamespaceHeaderKey, ConsulClientSettings.GlobalNamespace);
                 }
             }
 

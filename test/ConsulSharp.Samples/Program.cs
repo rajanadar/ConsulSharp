@@ -379,7 +379,7 @@ namespace ConsulSharp.Samples
             DisplayJson(clonedToken);
             Assert.NotNull(clonedToken.Data);
 
-            var list = _consulClient.V1.ACL.LegacyToken.ListTokensAsync().Result;
+            var list = _consulClient.V1.ACL.LegacyToken.ListAllTokensAsync().Result;
             DisplayJson(list);
             Assert.True(list.Data.Count > 1);
 

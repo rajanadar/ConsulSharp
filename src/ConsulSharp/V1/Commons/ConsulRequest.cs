@@ -72,5 +72,10 @@
         /// Gets or sets a flag indicating if the response json should be pretty.
         /// </summary>
         public bool PrettyJsonResponse { get; set; }
+
+        /// <summary>
+        /// The namespace to use to achieve tenant level isolation.
+        /// </summary>
+        public string PerRequestNamespace { get; set; }
     }
 }

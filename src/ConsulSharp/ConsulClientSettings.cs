@@ -62,6 +62,11 @@ namespace ConsulSharp
         public bool UseConsulTokenHeaderInsteadOfAuthorizationHeader { get; set; }
 
         /// <summary>
+        /// The namespace to use to achieve tenant level isolation.
+        /// </summary>
+        public string GlobalNamespace { get; set; }
+
+        /// <summary>
         /// A factory delegate to use if you want to provide your own http client.
         /// The Handler already has the certificates etc. enabled. 
         /// Don't worry about setting any consul specific values on your http client.
