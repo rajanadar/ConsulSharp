@@ -1,23 +1,27 @@
-ConsulSharp
-==========
+# ConsulSharp
 
-ConsulSharp is the most comprehensive cross-platform .NET library for HashiCorp's Consul.
+The most comprehensive cross-platform .NET Library for HashiCorp's Consul - A Service Mesh Solution.
 
-**ConsulSharp Latest release: FIRST RELEASE COMING SOON**
+**ConsulSharp NuGet:** [![NuGet](https://img.shields.io/nuget/dt/ConsulSharp.svg?style=flat)](https://www.nuget.org/packages/ConsulSharp)
 
 **ConsulSharp Latest Documentation:** Inline Below and also at: http://rajanadar.github.io/ConsulSharp/
+
+**ConsulSharp Questions/Clarifications:** [Ask on Stack Overflow with the tag consulsharp](https://stackoverflow.com/questions/tagged/consulsharp)
 
 **ConsulSharp Gitter Lobby:** [Gitter Lobby](https://gitter.im/rajanadar-ConsulSharp/Lobby)
 
 **Report Issues/Feedback:** [Create a ConsulSharp GitHub issue](https://github.com/rajanadar/ConsulSharp/issues/new)
 
+**Contributing Guidlines:** [ConsulSharp Contribution Guidelines](https://github.com/rajanadar/ConsulSharp/blob/master/CONTRIBUTING.MD)
+
+[![NuGet](https://img.shields.io/nuget/dt/ConsulSharp.svg?style=flat)](https://www.nuget.org/packages/ConsulSharp)	
 [![Join the chat at https://gitter.im/rajanadar-ConsulSharp/Lobby](https://badges.gitter.im/rajanadar-ConsulSharp/Lobby.svg)](https://gitter.im/rajanadar-ConsulSharp/Lobby?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)	
 [![License](https://img.shields.io/:license-apache%202.0-brightgreen.svg)](http://www.apache.org/licenses/LICENSE-2.0.html)	
 [![Build status](https://ci.appveyor.com/api/projects/status/s5axk8qdoyl7g9q0?svg=true)](https://ci.appveyor.com/project/rajanadar/consulsharp)
 
 ### What is ConsulSharp?	
 
-* ConsulSharp is a .NET Standard 1.3 (and .NET 4.5) cross-platform C# Library that can be used in any .NET application to interact with Hashicorp's Consul.	
+* ConsulSharp is a .NET Standard 1.3, .NET Standard 2.0 (and .NET 4.5) cross-platform C# Library that can be used in any .NET application to interact with Hashicorp's Consul.
 * Consul is a service mesh solution providing a full featured control plane with service discovery, configuration, and segmentation functionality.
 
 ConsulSharp is designed ground up, to give a structured user experience across the various Consul capabilities.
@@ -56,7 +60,7 @@ var managementTokenId = await consulClient.V1.ACL.BootstrapAsync();
 
 ### ConsulSharp - Supported .NET Platforms
 
-ConsulSharp is built on **.NET Standard 1.3** & **.NET Framework 4.5**. This makes it highly compatible and cross-platform.
+ConsulSharp is built on **.NET Standard 1.3**, **.NET Standard 2.0** & **.NET Framework 4.5**. This makes it highly compatible and cross-platform.
 
 The following platforms are supported due to that.
 
