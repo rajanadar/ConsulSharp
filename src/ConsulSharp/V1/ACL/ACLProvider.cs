@@ -3,6 +3,7 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using ConsulSharp.Core;
 using ConsulSharp.V1.ACL.LegacyToken;
+using ConsulSharp.V1.ACL.Policy;
 using ConsulSharp.V1.ACL.Token;
 using ConsulSharp.V1.Commons;
 
@@ -13,8 +14,8 @@ namespace ConsulSharp.V1.ACL
         private readonly Polymath _polymath;
 
         public ILegacyToken LegacyToken { get; }
-
         public IToken Token { get; }
+        public IPolicy Policy { get; }
 
         public ACLProvider(Polymath polymath)
         {
@@ -22,6 +23,7 @@ namespace ConsulSharp.V1.ACL
 
             LegacyToken = new LegacyTokenProvider(polymath);
             Token = new TokenProvider(polymath);
+            Policy = new PolicyProvider(polymath);
         }
 
         public async Task<ConsulResponse<BootstrapResponse>> BootstrapAsync(ConsulRequest request = null)

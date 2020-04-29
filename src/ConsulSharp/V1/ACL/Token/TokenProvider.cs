@@ -16,39 +16,39 @@ namespace ConsulSharp.V1.ACL.Token
             _polymath = polymath;
         }
 
-        public async Task<ConsulResponse<TokenModel>> CreateTokenAsync(ConsulRequest<CreateTokenRequest> request)
+        public async Task<ConsulResponse<TokenModel>> CreateAsync(ConsulRequest<CreateTokenRequest> request)
         {
             return await _polymath.MakeConsulApiRequest<TokenModel>(request, "v1/acl/token", HttpMethod.Put, request.RequestData).ConfigureAwait(_polymath.ConsulClientSettings.ContinueAsyncTasksOnCapturedContext);
         }
 
-        public async Task<ConsulResponse<TokenModel>> ReadTokenAsync(ConsulRequest<string> request)
+        public async Task<ConsulResponse<TokenModel>> ReadAsync(ConsulRequest<string> request)
         {
             return await _polymath.MakeConsulApiRequest<TokenModel>(request, "v1/acl/token/" + request.RequestData, HttpMethod.Get).ConfigureAwait(_polymath.ConsulClientSettings.ContinueAsyncTasksOnCapturedContext);
         }
 
-        public async Task<ConsulResponse<TokenModel>> ReadCallingTokenAsync(ConsulRequest request = null)
+        public async Task<ConsulResponse<TokenModel>> ReadSelfAsync(ConsulRequest request = null)
         {
             return await _polymath.MakeConsulApiRequest<TokenModel>(request, "v1/acl/token/self", HttpMethod.Get).ConfigureAwait(_polymath.ConsulClientSettings.ContinueAsyncTasksOnCapturedContext);
         }
 
-        public async Task<ConsulResponse<TokenModel>> UpdateTokenAsync(ConsulRequest<UpdateTokenRequest> request)
+        public async Task<ConsulResponse<TokenModel>> UpdateAsync(ConsulRequest<UpdateTokenRequest> request)
         {
             return await _polymath.MakeConsulApiRequest<TokenModel>(request, "v1/acl/token/" + request.RequestData.AccessorId, HttpMethod.Put, request.RequestData).ConfigureAwait(_polymath.ConsulClientSettings.ContinueAsyncTasksOnCapturedContext);
         }
 
-        public async Task<ConsulResponse<TokenModel>> CloneTokenAsync(ConsulRequest<CloneTokenRequest> request)
+        public async Task<ConsulResponse<TokenModel>> CloneAsync(ConsulRequest<CloneTokenRequest> request)
         {
             return await _polymath.MakeConsulApiRequest<TokenModel>(request, "v1/acl/token/" + request.RequestData.AccessorId + "/clone", HttpMethod.Put, request.RequestData).ConfigureAwait(_polymath.ConsulClientSettings.ContinueAsyncTasksOnCapturedContext);
         }
 
-        public async Task<ConsulResponse<bool>> DeleteTokenAsync(ConsulRequest<string> request)
+        public async Task<ConsulResponse<bool>> DeleteAsync(ConsulRequest<string> request)
         {
             var response = await _polymath.MakeConsulApiRequest<string>(request, "v1/acl/token/" + request.RequestData, HttpMethod.Delete, rawResponse: true).ConfigureAwait(_polymath.ConsulClientSettings.ContinueAsyncTasksOnCapturedContext);
 
             return response.Map(() => bool.Parse(response.Data));
         }
 
-        public async Task<ConsulResponse<List<TokenModel>>> ListAllTokensAsync(ConsulRequest<ListTokensRequest> request = null)
+        public async Task<ConsulResponse<List<TokenModel>>> ListAsync(ConsulRequest<ListTokensRequest> request = null)
         {
             return await _polymath.MakeConsulApiRequest<List<TokenModel>>(request, "v1/acl/tokens" + GetQueryString(request.RequestData), HttpMethod.Get).ConfigureAwait(_polymath.ConsulClientSettings.ContinueAsyncTasksOnCapturedContext);
         }
