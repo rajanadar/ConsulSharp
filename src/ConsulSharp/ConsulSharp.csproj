@@ -1,33 +1,77 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>netstandard1.3;net45</TargetFrameworks>
-    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <Version>1.2.200</Version>
+    <TargetFrameworks>netstandard1.3;netstandard2.0;net45</TargetFrameworks>
+    <SignAssembly>true</SignAssembly>
+    <DelaySign>false</DelaySign>
+    <AssemblyOriginatorKeyFile>ConsulSharp.snk</AssemblyOriginatorKeyFile>
+
+    <Title>ConsulSharp</Title>
+    <Version>1.7.2</Version>
     <Authors>Raja Nadar</Authors>
-    <Company>Raja NadarRaja Nadar</Company>
-    <Description>* The most comprehensive .NET Library for HashiCorp's Consul - A Service Mesh Solution
+    <Company>Raja Nadar</Company>
+    <Copyright>Copyright ©  2020 Raja Nadar. All rights reserved.</Copyright>
+    <PackageProjectUrl>https://github.com/rajanadar/ConsulSharp</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/rajanadar/ConsulSharp</RepositoryUrl>
+    <PackageTags>c# consul .net netcore netstandard api service mesh discovery consul kv</PackageTags>
+    <PackageReleaseNotes>Please see https://github.com/rajanadar/ConsulSharp/blob/master/CHANGELOG.md </PackageReleaseNotes>
+
+    <Description>The most comprehensive .NET Library for HashiCorp's Consul which is a service mesh solution.
+    
  * ConsulSharp supports all Http API methods supported by Consul
  * It has first class support for all the requests and responses with strong .NET types.
- * This library is built with .NET Standard 1.3 &amp; .NET 4.5 and hence is cross-platform across .NET Core 1.0, .NET 4.5 and more, Xamarin iOS, Android, Mac, UWP etc.</Description>
-    <Copyright>Copyright ©  2019 Raja Nadar. All rights reserved.</Copyright>
-    <PackageLicenseUrl>https://raw.githubusercontent.com/rajanadar/ConsulSharp/master/LICENSE</PackageLicenseUrl>
-    <PackageProjectUrl>https://github.com/rajanadar/ConsulSharp</PackageProjectUrl>
-    <PackageIconUrl>https://raw.githubusercontent.com/rajanadar/ConsulSharp/master/ConsulSharpIcon.png</PackageIconUrl>
-    <RepositoryUrl>https://github.com/rajanadar/ConsulSharp</RepositoryUrl>
+ 
+ This library is built with .NET Standard 1.3, 2.0, .NET 4.5 and hence is cross-platform across .NET Core 1.0, 2.0m .NET 4.5 and above, Xamarin iOS, Android, Mac, UWP etc.</Description>
+
     <RepositoryType>Github</RepositoryType>
-    <PackageTags>c# consul .net netcore netstandard api service mesh discovery consul kv</PackageTags>
-    <PackageReleaseNotes>Please see changelog.md</PackageReleaseNotes>
-    <SignAssembly>true</SignAssembly>
-    <AssemblyOriginatorKeyFile>ConsulSharp.snk</AssemblyOriginatorKeyFile>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+
+    <AssemblyVersion>1.7.2</AssemblyVersion>
+    <FileVersion>1.7.2</FileVersion>
+    <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
+    <PackageIcon>icon.png</PackageIcon>
+
+    <!-- SourceLink specific details: https://github.com/dotnet/sourcelink/blob/master/README.md -->
+    <PublishRepositoryUrl>true</PublishRepositoryUrl>
+    <EmbedUntrackedSources>true</EmbedUntrackedSources>
+    <IncludeSymbols>true</IncludeSymbols>
+    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+
+    <Deterministic>True</Deterministic>
+    <ContinousIntegrationBuild>True</ContinousIntegrationBuild>
+    
   </PropertyGroup>
 
+  <!-- https://github.com/dotnet/sourcelink/issues/572 -->
+  <PropertyGroup>
+    <TargetFrameworkMonikerAssemblyAttributesPath>$([System.IO.Path]::Combine('$(IntermediateOutputPath)','$(TargetFrameworkMoniker).AssemblyAttributes$(DefaultLanguageSourceExtension)'))</TargetFrameworkMonikerAssemblyAttributesPath>
+  </PropertyGroup>
   <ItemGroup>
+    <EmbeddedFiles Include="$(GeneratedAssemblyInfoFile)"/>
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="..\..\icon.png">
+      <Pack>True</Pack>
+      <PackagePath></PackagePath>
+    </None>
+  </ItemGroup>
+
+
+  <ItemGroup>
+     <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.0.0">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
     <PackageReference Include="Newtonsoft.Json" Version="11.0.2" />
   </ItemGroup>
 
   <PropertyGroup Condition="'$(TargetFramework)' == 'netstandard1.3'">
     <AssemblyTitle>ConsulSharp .NET Standard 1.3</AssemblyTitle>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">
+    <AssemblyTitle>ConsulSharp .NET Standard 2.0</AssemblyTitle>
   </PropertyGroup>
 
   <ItemGroup Condition=" '$(TargetFramework)' == 'netstandard1.3' ">
@@ -40,10 +84,29 @@
 
   <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|netstandard1.3|AnyCPU'">
     <DocumentationFile>bin\Debug\netstandard1.3\ConsulSharp.xml</DocumentationFile>
+    <NoWarn>1701;1702;1705;1591</NoWarn>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|netstandard1.3|AnyCPU'">
     <DocumentationFile>bin\Release\netstandard1.3\ConsulSharp.xml</DocumentationFile>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|netstandard2.0|AnyCPU'">
+    <DocumentationFile>bin\Debug\netstandard2.0\ConsulSharp.xml</DocumentationFile>
+    <NoWarn>1701;1702;1705;1591</NoWarn>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|netstandard2.0|AnyCPU'">
+    <DocumentationFile>bin\Release\netstandard2.0\ConsulSharp.xml</DocumentationFile>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net45|AnyCPU'">
+    <DocumentationFile>bin\Debug\net45\ConsulSharp.xml</DocumentationFile>
+    <NoWarn>1701;1702;1705;1591</NoWarn>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net45|AnyCPU'">
+    <DocumentationFile>bin\Release\net45\ConsulSharp.xml</DocumentationFile>
   </PropertyGroup>
 
   <ItemGroup Condition=" '$(TargetFramework)' == 'net45' ">
