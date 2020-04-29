@@ -1,4 +1,4 @@
-﻿namespace ConsulSharp.V1.ACL.Models
+﻿namespace ConsulSharp.V1.ACL.LegacyToken
 {
     /// <summary>
     /// The Token Request model.

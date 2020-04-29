@@ -1,6 +1,6 @@
 ﻿using Newtonsoft.Json;
 
-namespace ConsulSharp.V1.ACL.Models
+namespace ConsulSharp.V1.ACL
 {
     /// <summary>
     /// The Replication Status Model.

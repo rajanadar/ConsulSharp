@@ -4,8 +4,8 @@ using System.IO;
 using System.Net;
 using System.Text;
 using ConsulSharp.Core;
-using ConsulSharp.V1;
-using ConsulSharp.V1.ACL.Models;
+using ConsulSharp.V1.ACL;
+using ConsulSharp.V1.ACL.LegacyToken;
 using ConsulSharp.V1.Commons;
 using ConsulSharp.V1.Event.Models;
 using ConsulSharp.V1.KeyValue.Models;
@@ -355,7 +355,7 @@ namespace ConsulSharp.Samples
                 TokenType = TokenType.client
             };
 
-            var newToken = _consulClient.V1.ACL.CreateTokenAsync(new ConsulRequest<TokenRequest> { RequestData = newTokenModel }).Result;
+            var newToken = _consulClient.V1.ACL.LegacyToken.CreateTokenAsync(new ConsulRequest<TokenRequest> { RequestData = newTokenModel }).Result;
             DisplayJson(newToken);
             Assert.Equal(newTokenModel.Id, newToken.Data);
 
@@ -367,19 +367,19 @@ namespace ConsulSharp.Samples
                 TokenType = TokenType.client
             };
 
-            newToken = _consulClient.V1.ACL.UpdateTokenAsync(new ConsulRequest<TokenRequest> { RequestData = updateTokenModel }).Result;
+            newToken = _consulClient.V1.ACL.LegacyToken.UpdateTokenAsync(new ConsulRequest<TokenRequest> { RequestData = updateTokenModel }).Result;
             DisplayJson(newToken);
             Assert.Equal(updateTokenModel.Id, newToken.Data);
 
-            var readToken = _consulClient.V1.ACL.ReadTokenAsync(new ConsulRequest<string> { RequestData = updateTokenModel.Id }).Result;
+            var readToken = _consulClient.V1.ACL.LegacyToken.ReadTokenAsync(new ConsulRequest<string> { RequestData = updateTokenModel.Id }).Result;
             DisplayJson(readToken);
             Assert.Equal(updateTokenModel.Name, readToken.Data[0].Name);
 
-            var clonedToken = _consulClient.V1.ACL.CloneTokenAsync(new ConsulRequest<string> { RequestData = readToken.Data[0].Id }).Result;
+            var clonedToken = _consulClient.V1.ACL.LegacyToken.CloneTokenAsync(new ConsulRequest<string> { RequestData = readToken.Data[0].Id }).Result;
             DisplayJson(clonedToken);
             Assert.NotNull(clonedToken.Data);
 
-            var list = _consulClient.V1.ACL.ListTokensAsync().Result;
+            var list = _consulClient.V1.ACL.LegacyToken.ListTokensAsync().Result;
             DisplayJson(list);
             Assert.True(list.Data.Count > 1);
 
@@ -387,14 +387,14 @@ namespace ConsulSharp.Samples
             DisplayJson(repStatus);
             Assert.NotNull(repStatus.Data);
 
-            var del1 = _consulClient.V1.ACL.DeleteTokenAsync(new ConsulRequest<string> { RequestData = readToken.Data[0].Id }).Result;
+            var del1 = _consulClient.V1.ACL.LegacyToken.DeleteTokenAsync(new ConsulRequest<string> { RequestData = readToken.Data[0].Id }).Result;
             DisplayJson(del1);
 
-            var tokens = _consulClient.V1.ACL.ReadTokenAsync(new ConsulRequest<string> { RequestData = updateTokenModel.Id }).Result;
+            var tokens = _consulClient.V1.ACL.LegacyToken.ReadTokenAsync(new ConsulRequest<string> { RequestData = updateTokenModel.Id }).Result;
             DisplayJson(tokens);
             Assert.True(tokens.Data.Count == 0);
 
-            var del2 = _consulClient.V1.ACL.DeleteTokenAsync(new ConsulRequest<string> { RequestData = clonedToken.Data }).Result;
+            var del2 = _consulClient.V1.ACL.LegacyToken.DeleteTokenAsync(new ConsulRequest<string> { RequestData = clonedToken.Data }).Result;
             DisplayJson(del2);
         }
 

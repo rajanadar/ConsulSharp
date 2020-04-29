@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using Newtonsoft.Json;
 
-namespace ConsulSharp.V1.ACL.Models
+namespace ConsulSharp.V1.ACL
 {
     public class AuthRequest
     {

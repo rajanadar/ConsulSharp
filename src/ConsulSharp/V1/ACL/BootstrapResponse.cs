@@ -2,7 +2,7 @@
 using ConsulSharp.V1.Commons;
 using Newtonsoft.Json;
 
-namespace ConsulSharp.V1.ACL.Models
+namespace ConsulSharp.V1.ACL
 {
     /// <summary>
     /// The BootstrapResponse model.
