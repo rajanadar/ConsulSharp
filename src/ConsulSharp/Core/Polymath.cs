@@ -14,7 +14,7 @@ namespace ConsulSharp.Core
 {
     internal class Polymath
     {
-        private const string ConsulTokenHeaderKey = "X-Consul-Token";
+        public const string ConsulTokenHeaderKey = "X-Consul-Token";
         private const string AuthorizationHeaderKey = "Authorization"; 
 
         private const string ConsulIndexHeaderKey = "X-Consul-Index";
@@ -46,14 +46,22 @@ namespace ConsulSharp.Core
             }
         }
 
-        public async Task MakeConsulApiRequest(ConsulRequest request, string resourcePath, HttpMethod httpMethod, object requestData = null, bool rawRequest = false, bool rawResponse = false, bool unauthenticated = false)
+        public async Task MakeConsulApiRequest(ConsulRequest request, string resourcePath, HttpMethod httpMethod, object requestData = null, bool rawRequest = false, bool rawResponse = false, bool unauthenticated = false, IDictionary<string, string> preHeaders = null)
         {
-            await MakeConsulApiRequest<JToken>(request, resourcePath, httpMethod, requestData, rawRequest, rawResponse, unauthenticated: unauthenticated);
+            await MakeConsulApiRequest<JToken>(request, resourcePath, httpMethod, requestData, rawRequest, rawResponse, unauthenticated: unauthenticated, preHeaders: preHeaders);
         }
 
-        public async Task<ConsulResponse<TResponseData>> MakeConsulApiRequest<TResponseData>(ConsulRequest request, string resourcePath, HttpMethod httpMethod, object requestData = null, bool rawRequest = false, bool rawResponse = false, Func<HttpResponseMessage, bool> postResponseFunc = null, bool unauthenticated = false) where TResponseData : class
+        public async Task<ConsulResponse<TResponseData>> MakeConsulApiRequest<TResponseData>(ConsulRequest request, string resourcePath, HttpMethod httpMethod, object requestData = null, bool rawRequest = false, bool rawResponse = false, Func<HttpResponseMessage, bool> postResponseFunc = null, bool unauthenticated = false, IDictionary<string, string> preHeaders = null) where TResponseData : class
         {
             var headers = new Dictionary<string, string>();
+
+            if (preHeaders != null && preHeaders.Any())
+            {
+                foreach (var item in preHeaders)
+                {
+                    headers.Add(item.Key, item.Value);
+                }
+            }
 
             if (!unauthenticated)
             {

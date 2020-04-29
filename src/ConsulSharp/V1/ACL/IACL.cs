@@ -34,6 +34,25 @@ namespace ConsulSharp.V1.ACL
         Task<ConsulResponse<ReplicationStatus>> CheckReplicationAsync(ConsulRequest<string> request = null);
 
         /// <summary>
+        /// This endpoint was added in Consul 1.5.0 and is used to exchange an auth method bearer 
+        /// token for a newly-created Consul ACL token.
+        /// </summary>
+        /// <param name="request">
+        /// The request.
+        /// </param>
+        /// <returns>The response.</returns>
+        Task<ConsulResponse<AuthResponse>> LoginAsync(ConsulRequest<AuthRequest> request);
+
+        /// <summary>
+        /// This endpoint was added in Consul 1.5.0 and is used to destroy a token created via the login endpoint. 
+        /// </summary>
+        /// <param name="request">
+        /// The request.
+        /// </param>
+        /// <returns>The response.</returns>
+        Task LogoutAsync(ConsulRequest<string> request);
+
+        /// <summary>
         /// Makes a new ACL token.
         /// </summary>
         /// <param name="request">The request with token options.</param>

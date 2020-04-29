@@ -3,9 +3,9 @@
 namespace ConsulSharp.V1.Commons
 {
     /// <summary>
-    /// Represents a Consul Policy.
+    /// Represents a IdName
     /// </summary>
-    public class Policy
+    public class IdName
     {
         [JsonProperty("ID")]
         public string Id { get; set; }
