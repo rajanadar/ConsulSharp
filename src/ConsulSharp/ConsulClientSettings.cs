@@ -54,5 +54,22 @@ namespace ConsulSharp
         /// The per http response delegate invoked after every consul api http response.
         /// </summary>
         public Action<HttpResponseMessage> AfterApiResponseAction { get; set; }
+
+        /// <summary>
+        /// Flag to indicate how the consul token should be passed to the API.
+        /// Default is to use the Authorization: Bearer &lt;consul-token&gt; scheme.
+        /// </summary>
+        public bool UseConsulTokenHeaderInsteadOfAuthorizationHeader { get; set; }
+
+        /// <summary>
+        /// A factory delegate to use if you want to provide your own http client.
+        /// The Handler already has the certificates etc. enabled. 
+        /// Don't worry about setting any consul specific values on your http client.
+        /// Just create your http client and pass it in. 
+        /// ConsulSharp will set all the necessary things.
+        /// Use the handler parameter to set proxy etc. 
+        /// It is essential that your HttpClient use the handler, if you have custom proxy settings etc.
+        /// </summary>
+        public Func<HttpClientHandler, HttpClient> MyHttpClientProviderFunc { get; set; }
     }
 }

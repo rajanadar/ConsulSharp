@@ -14,6 +14,7 @@ namespace ConsulSharp.Core
 {
     internal class Polymath
     {
+        private const string ConsulTokenHeaderKey = "X-Consul-Token";
         private const string AuthorizationHeaderKey = "Authorization"; 
 
         private const string ConsulIndexHeaderKey = "X-Consul-Index";
@@ -35,7 +36,8 @@ namespace ConsulSharp.Core
             var handler = new HttpClientHandler();
             consulClientSettings.PostProcessHttpClientHandlerAction?.Invoke(handler);
 
-            _httpClient = new HttpClient(handler);
+            _httpClient = ConsulClientSettings.MyHttpClientProviderFunc == null ? new HttpClient(handler) : ConsulClientSettings.MyHttpClientProviderFunc(handler);
+
             _httpClient.BaseAddress = new Uri(consulClientSettings.ConsulServerUriWithPort);
 
             if (consulClientSettings.ConsulServiceTimeout != null)
@@ -55,7 +57,14 @@ namespace ConsulSharp.Core
 
             if (!unauthenticated)
             {
-                headers.Add(AuthorizationHeaderKey, "Bearer " + ConsulClientSettings.ConsulToken);
+                if (ConsulClientSettings.UseConsulTokenHeaderInsteadOfAuthorizationHeader)
+                {
+                    headers.Add(ConsulTokenHeaderKey, ConsulClientSettings.ConsulToken);
+                }
+                else
+                {
+                    headers.Add(AuthorizationHeaderKey, "Bearer " + ConsulClientSettings.ConsulToken);
+                }
             }
 
             var cacheParams = new List<string>(3);
