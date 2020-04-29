@@ -347,7 +347,7 @@ namespace ConsulSharp.Samples
             var consulException = Assert.ThrowsAsync<ConsulApiException>(() => _consulClient.V1.ACL.BootstrapAsync()).Result;
             Assert.Equal(HttpStatusCode.Forbidden, consulException.HttpStatusCode);
 
-            var newTokenModel = new TokenRequestModel
+            var newTokenModel = new TokenRequest
             {
                 Id = Guid.NewGuid().ToString(),
                 Name = "my-app-token",
@@ -355,11 +355,11 @@ namespace ConsulSharp.Samples
                 TokenType = TokenType.client
             };
 
-            var newToken = _consulClient.V1.ACL.CreateTokenAsync(new ConsulRequest<TokenRequestModel> { RequestData = newTokenModel }).Result;
+            var newToken = _consulClient.V1.ACL.CreateTokenAsync(new ConsulRequest<TokenRequest> { RequestData = newTokenModel }).Result;
             DisplayJson(newToken);
             Assert.Equal(newTokenModel.Id, newToken.Data);
 
-            var updateTokenModel = new TokenRequestModel
+            var updateTokenModel = new TokenRequest
             {
                 Id = newTokenModel.Id,
                 Name = "updated",
@@ -367,7 +367,7 @@ namespace ConsulSharp.Samples
                 TokenType = TokenType.client
             };
 
-            newToken = _consulClient.V1.ACL.UpdateTokenAsync(new ConsulRequest<TokenRequestModel> { RequestData = updateTokenModel }).Result;
+            newToken = _consulClient.V1.ACL.UpdateTokenAsync(new ConsulRequest<TokenRequest> { RequestData = updateTokenModel }).Result;
             DisplayJson(newToken);
             Assert.Equal(updateTokenModel.Id, newToken.Data);
 

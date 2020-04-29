@@ -3,12 +3,12 @@
     /// <summary>
     /// The Token Request model.
     /// </summary>
-    public class TokenRequestModel : AbstractTokenModel
+    public class TokenRequest : AbstractToken
     {
         /// <summary>
-        /// Initializes an instance of <see cref="TokenRequestModel"/>.
+        /// Initializes an instance of <see cref="TokenRequest"/>.
         /// </summary>
-        public TokenRequestModel()
+        public TokenRequest()
         {
             TokenType = TokenType.client;
         }

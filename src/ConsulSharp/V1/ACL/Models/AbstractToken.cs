@@ -6,7 +6,7 @@ namespace ConsulSharp.V1.ACL.Models
     /// <summary>
     /// The Abstract Token model.
     /// </summary>
-    public abstract class AbstractTokenModel
+    public abstract class AbstractToken
     {
         /// <summary>
         /// The ID of the ACL.

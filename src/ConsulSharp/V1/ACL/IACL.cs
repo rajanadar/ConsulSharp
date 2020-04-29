@@ -22,18 +22,30 @@ namespace ConsulSharp.V1.ACL
         Task<ConsulResponse<BootstrapResponse>> BootstrapAsync(ConsulRequest request = null);
 
         /// <summary>
+        /// This endpoint returns the status of the ACL replication process in the datacenter. 
+        /// This is intended to be used by operators, or by automation checking the health of ACL replication.
+        /// </summary>
+        /// <param name="request">
+        /// The request with the datacenter to query. 
+        /// This will default to the datacenter of the agent being queried. 
+        /// This is specified as part of the URL as a query parameter.
+        /// </param>
+        /// <returns>The replication details.</returns>
+        Task<ConsulResponse<ReplicationStatus>> CheckReplicationAsync(ConsulRequest<string> request = null);
+
+        /// <summary>
         /// Makes a new ACL token.
         /// </summary>
         /// <param name="request">The request with token options.</param>
         /// <returns>The token id.</returns>
-        Task<ConsulResponse<string>> CreateTokenAsync(ConsulRequest<TokenRequestModel> request);
+        Task<ConsulResponse<string>> CreateTokenAsync(ConsulRequest<TokenRequest> request);
 
         /// <summary>
         /// This endpoint is used to modify the policy for a given ACL token. Instead of generating a new token ID, the ID field must be provided.
         /// </summary>
         /// <param name="request">The request with token options.</param>
         /// <returns>The token id.</returns>
-        Task<ConsulResponse<string>> UpdateTokenAsync(ConsulRequest<TokenRequestModel> request);
+        Task<ConsulResponse<string>> UpdateTokenAsync(ConsulRequest<TokenRequest> request);
 
         /// <summary>
         /// This endpoint deletes an ACL token with the given ID.
@@ -63,17 +75,5 @@ namespace ConsulSharp.V1.ACL
         /// <param name="request">The request.</param>
         /// <returns>The list of tokens.</returns>
         Task<ConsulResponse<List<TokenModel>>> ListTokensAsync(ConsulRequest request = null);
-
-        /// <summary>
-        /// This endpoint returns the status of the ACL replication process in the datacenter. 
-        /// This is intended to be used by operators, or by automation checking the health of ACL replication.
-        /// </summary>
-        /// <param name="request">
-        /// The request with the datacenter to query. 
-        /// This will default to the datacenter of the agent being queried. 
-        /// This is specified as part of the URL as a query parameter.
-        /// </param>
-        /// <returns>The replication details.</returns>
-        Task<ConsulResponse<ReplicationStatusModel>> CheckReplicationAsync(ConsulRequest<string> request = null);
     }
 }

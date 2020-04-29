@@ -5,7 +5,7 @@ namespace ConsulSharp.V1.ACL.Models
     /// <summary>
     /// The Replication Status Model.
     /// </summary>
-    public class ReplicationStatusModel
+    public class ReplicationStatus
     {
         /// <summary>
         /// Reports whether ACL replication is enabled for the datacenter.
@@ -27,6 +27,12 @@ namespace ConsulSharp.V1.ACL.Models
         public string SourceDatacenter { get; set; }
 
         /// <summary>
+        /// The type of replication that is currently in use.
+        /// </summary>
+        [JsonProperty("ReplicationType")]
+        public string ReplicationType { get; set; }
+
+        /// <summary>
         /// The last index that was successfully replicated. 
         /// You can compare this to the X-Consul-Index header returned by the /v1/acl/list endpoint to 
         /// determine if the replication process has gotten all available ACLs. 
@@ -37,6 +43,16 @@ namespace ConsulSharp.V1.ACL.Models
         /// </summary>
         [JsonProperty("ReplicatedIndex")]
         public ulong ReplicatedIndex { get; set; }
+
+        /// <summary>
+        /// The last token index that was successfully replicated. 
+        /// This index can be compared with the value of the X-Consul-Index header returned 
+        /// by the /v1/acl/tokens endpoint to determine if the replication process 
+        /// has gotten all available ACL tokens. 
+        /// Note that ACL replication is rate limited so the indexes may lag behind the primary datacenter.
+        /// </summary>
+        [JsonProperty("ReplicatedTokenIndex")]
+        public ulong ReplicatedTokenIndex { get; set; }
 
         /// <summary>
         /// The UTC time of the last successful sync operation. 

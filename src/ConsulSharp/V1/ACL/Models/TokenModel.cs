@@ -5,7 +5,7 @@ namespace ConsulSharp.V1.ACL.Models
     /// <summary>
     /// The Token model.
     /// </summary>
-    public class TokenModel : AbstractTokenModel
+    public class TokenModel : AbstractToken
     {
         /// <summary>
         /// The create index.
