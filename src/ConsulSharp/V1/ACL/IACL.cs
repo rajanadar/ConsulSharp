@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
+using ConsulSharp.V1.ACL.AuthMethod;
 using ConsulSharp.V1.ACL.LegacyToken;
 using ConsulSharp.V1.ACL.Policy;
 using ConsulSharp.V1.ACL.Role;
@@ -69,5 +70,7 @@ namespace ConsulSharp.V1.ACL
         IPolicy Policy { get; }
 
         IRole Role { get; }
+
+        IAuthMethod AuthMethod { get; }
     }
 }

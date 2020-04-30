@@ -1,6 +1,7 @@
 ﻿using System.Net.Http;
 using System.Threading.Tasks;
 using ConsulSharp.Core;
+using ConsulSharp.V1.ACL.AuthMethod;
 using ConsulSharp.V1.ACL.LegacyToken;
 using ConsulSharp.V1.ACL.Policy;
 using ConsulSharp.V1.ACL.Role;
@@ -17,6 +18,7 @@ namespace ConsulSharp.V1.ACL
         public IToken Token { get; }
         public IPolicy Policy { get; }
         public IRole Role { get; }
+        public IAuthMethod AuthMethod { get; }
 
         public ACLProvider(Polymath polymath)
         {
@@ -26,6 +28,7 @@ namespace ConsulSharp.V1.ACL
             Token = new TokenProvider(polymath);
             Policy = new PolicyProvider(polymath);
             Role = new RoleProvider(polymath);
+            AuthMethod = new AuthMethodProvider(polymath);
         }
 
         public async Task<ConsulResponse<BootstrapResponse>> BootstrapAsync(ConsulRequest request = null)
