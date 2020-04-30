@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Net.Http;
+﻿using System.Net.Http;
 using System.Threading.Tasks;
 using ConsulSharp.Core;
 using ConsulSharp.V1.ACL.LegacyToken;

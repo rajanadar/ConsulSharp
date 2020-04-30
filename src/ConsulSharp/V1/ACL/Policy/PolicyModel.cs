@@ -1,11 +1,11 @@
 ﻿using Newtonsoft.Json;
 
-namespace ConsulSharp.V1.ACL.Token
+namespace ConsulSharp.V1.ACL.Policy
 {
-    public class TokenModel : AbstractToken
+    public class PolicyModel : AbstractPolicy
     {
-        [JsonProperty("CreateTime")]
-        public string CreateTime { get; set; }
+        [JsonProperty("ID")]
+        public string PolicyId { get; set; }
 
         [JsonProperty("Hash")]
         public string Hash { get; set; }

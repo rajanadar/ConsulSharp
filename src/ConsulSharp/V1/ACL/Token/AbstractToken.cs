@@ -23,17 +23,5 @@ namespace ConsulSharp.V1.ACL.Token
 
         [JsonProperty("Local")]
         public bool Local { get; set; }
-
-        [JsonProperty("CreateTime")]
-        public string CreateTime { get; set; }
-
-        [JsonProperty("Hash")]
-        public string Hash { get; set; }
-
-        [JsonProperty("CreateIndex")]
-        public int? CreateIndex { get; set; }
-
-        [JsonProperty("ModifyIndex")]
-        public int? ModifyIndex { get; set; }
     }
 }

@@ -32,9 +32,9 @@ namespace ConsulSharp.V1.Commons
         public string Hash { get; set; }
 
         [JsonProperty("CreateIndex")]
-        public int? CreateIndex { get; set; }
+        public ulong? CreateIndex { get; set; }
 
         [JsonProperty("ModifyIndex")]
-        public int? ModifyIndex { get; set; }
+        public ulong? ModifyIndex { get; set; }
     }
 }
