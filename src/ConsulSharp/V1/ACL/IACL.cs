@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using ConsulSharp.V1.ACL.LegacyToken;
 using ConsulSharp.V1.ACL.Policy;
+using ConsulSharp.V1.ACL.Role;
 using ConsulSharp.V1.ACL.Token;
 using ConsulSharp.V1.Commons;
 
@@ -66,5 +67,7 @@ namespace ConsulSharp.V1.ACL
         IToken Token { get; }
 
         IPolicy Policy { get; }
+
+        IRole Role { get; }
     }
 }
