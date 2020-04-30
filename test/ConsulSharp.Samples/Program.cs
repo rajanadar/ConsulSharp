@@ -5,6 +5,7 @@ using System.Net;
 using System.Text;
 using ConsulSharp.Core;
 using ConsulSharp.V1.ACL;
+using ConsulSharp.V1.ACL.Agent;
 using ConsulSharp.V1.ACL.LegacyToken;
 using ConsulSharp.V1.Commons;
 using ConsulSharp.V1.Event.Models;
@@ -97,12 +98,110 @@ namespace ConsulSharp.Samples
             });
 
             RunAclSamples();
+            RunAgentSamples();
             RunEventSamples();
             RunKeyValueSamples();
             RunSessionSamples();
             RunSnapshotSamples();
             RunStatusSamples();
             RunTransactionSamples();
+        }
+
+        private static void RunAclSamples()
+        {
+            output.AppendLine("\n ACL Samples \n");
+
+            var request = new ConsulRequest
+            {
+                ConsistencyMode = ConsistencyMode.consistent,
+                PrettyJsonResponse = true,
+                Wait = "10s"
+            };
+
+            var managementTokenResponse = _consulClient.V1.ACL.BootstrapAsync(request).Result;
+            DisplayJson(managementTokenResponse);
+            Assert.NotNull(managementTokenResponse.Data);
+
+            _managementToken = managementTokenResponse.Data.SecretId;
+            _consulClient = new ConsulClient(new ConsulClientSettings("http://127.0.0.1:8500", _managementToken)
+            {
+                AfterApiResponseAction = r =>
+                {
+                    var value = ((int)r.StatusCode + "-" + r.StatusCode) + "\n";
+                    var content = r.Content != null ? r.Content.ReadAsStringAsync().Result : string.Empty;
+
+                    output.AppendLine();
+                    output.AppendLine("==============================================================================");
+                    output.AppendLine();
+
+                    _responseContent = "Actual Consul Server Response: " + value + content;
+                    output.AppendLine(_responseContent);
+
+                    output.AppendLine("-------------------------------------");
+                }
+            });
+
+            var consulException = Assert.ThrowsAsync<ConsulApiException>(() => _consulClient.V1.ACL.BootstrapAsync()).Result;
+            Assert.Equal(HttpStatusCode.Forbidden, consulException.HttpStatusCode);
+
+            var newTokenModel = new TokenRequest
+            {
+                Id = Guid.NewGuid().ToString(),
+                Name = "my-app-token",
+                Rules = "",
+                TokenType = TokenType.client
+            };
+
+            var newToken = _consulClient.V1.ACL.LegacyToken.CreateAsync(new ConsulRequest<TokenRequest> { RequestData = newTokenModel }).Result;
+            DisplayJson(newToken);
+            Assert.Equal(newTokenModel.Id, newToken.Data);
+
+            var updateTokenModel = new TokenRequest
+            {
+                Id = newTokenModel.Id,
+                Name = "updated",
+                Rules = "",
+                TokenType = TokenType.client
+            };
+
+            newToken = _consulClient.V1.ACL.LegacyToken.UpdateAsync(new ConsulRequest<TokenRequest> { RequestData = updateTokenModel }).Result;
+            DisplayJson(newToken);
+            Assert.Equal(updateTokenModel.Id, newToken.Data);
+
+            var readToken = _consulClient.V1.ACL.LegacyToken.ReadAsync(new ConsulRequest<string> { RequestData = updateTokenModel.Id }).Result;
+            DisplayJson(readToken);
+            Assert.Equal(updateTokenModel.Name, readToken.Data[0].Name);
+
+            var clonedToken = _consulClient.V1.ACL.LegacyToken.CloneAsync(new ConsulRequest<string> { RequestData = readToken.Data[0].Id }).Result;
+            DisplayJson(clonedToken);
+            Assert.NotNull(clonedToken.Data);
+
+            var list = _consulClient.V1.ACL.LegacyToken.ListAsync().Result;
+            DisplayJson(list);
+            Assert.True(list.Data.Count > 1);
+
+            var repStatus = _consulClient.V1.ACL.CheckReplicationAsync().Result;
+            DisplayJson(repStatus);
+            Assert.NotNull(repStatus.Data);
+
+            var del1 = _consulClient.V1.ACL.LegacyToken.DeleteAsync(new ConsulRequest<string> { RequestData = readToken.Data[0].Id }).Result;
+            DisplayJson(del1);
+
+            var tokens = _consulClient.V1.ACL.LegacyToken.ReadAsync(new ConsulRequest<string> { RequestData = updateTokenModel.Id }).Result;
+            DisplayJson(tokens);
+            Assert.True(tokens.Data.Count == 0);
+
+            var del2 = _consulClient.V1.ACL.LegacyToken.DeleteAsync(new ConsulRequest<string> { RequestData = clonedToken.Data }).Result;
+            DisplayJson(del2);
+        }
+
+        private static void RunAgentSamples()
+        {
+            output.AppendLine("\n Agent Samples \n");
+
+            var members = _consulClient.V1.Agent.ListMembersAsync(new ConsulRequest<ListMemberRequest> { RequestData = new ListMemberRequest { WANMembers = true, Segment = "_all" } }).Result;
+            
+            DisplayJson(members);
         }
 
         private static void RunSessionSamples()
@@ -308,94 +407,6 @@ namespace ConsulSharp.Samples
 
             var consulException = Assert.ThrowsAsync<ConsulApiException>(() => _consulClient.V1.KeyValue.ReadAsync(readRequest)).Result;
             Assert.Equal(HttpStatusCode.NotFound, consulException.HttpStatusCode);
-        }
-
-        private static void RunAclSamples()
-        {
-            output.AppendLine("\n ACL Samples \n");
-
-            var request = new ConsulRequest
-            {
-                ConsistencyMode = ConsistencyMode.consistent,
-                PrettyJsonResponse = true,
-                Wait = "10s"
-            };
-
-            var managementTokenResponse = _consulClient.V1.ACL.BootstrapAsync(request).Result;
-            DisplayJson(managementTokenResponse);
-            Assert.NotNull(managementTokenResponse.Data);
-
-            _managementToken = managementTokenResponse.Data.SecretId;
-            _consulClient = new ConsulClient(new ConsulClientSettings("http://127.0.0.1:8500", _managementToken)
-            {
-                AfterApiResponseAction = r =>
-                {
-                    var value = ((int)r.StatusCode + "-" + r.StatusCode) + "\n";
-                    var content = r.Content != null ? r.Content.ReadAsStringAsync().Result : string.Empty;
-
-                    output.AppendLine();
-                    output.AppendLine("==============================================================================");
-                    output.AppendLine();
-
-                    _responseContent = "Actual Consul Server Response: " + value + content;
-                    output.AppendLine(_responseContent);
-
-                    output.AppendLine("-------------------------------------");
-                }
-            });
-
-            var consulException = Assert.ThrowsAsync<ConsulApiException>(() => _consulClient.V1.ACL.BootstrapAsync()).Result;
-            Assert.Equal(HttpStatusCode.Forbidden, consulException.HttpStatusCode);
-
-            var newTokenModel = new TokenRequest
-            {
-                Id = Guid.NewGuid().ToString(),
-                Name = "my-app-token",
-                Rules = "",
-                TokenType = TokenType.client
-            };
-
-            var newToken = _consulClient.V1.ACL.LegacyToken.CreateAsync(new ConsulRequest<TokenRequest> { RequestData = newTokenModel }).Result;
-            DisplayJson(newToken);
-            Assert.Equal(newTokenModel.Id, newToken.Data);
-
-            var updateTokenModel = new TokenRequest
-            {
-                Id = newTokenModel.Id,
-                Name = "updated",
-                Rules = "",
-                TokenType = TokenType.client
-            };
-
-            newToken = _consulClient.V1.ACL.LegacyToken.UpdateAsync(new ConsulRequest<TokenRequest> { RequestData = updateTokenModel }).Result;
-            DisplayJson(newToken);
-            Assert.Equal(updateTokenModel.Id, newToken.Data);
-
-            var readToken = _consulClient.V1.ACL.LegacyToken.ReadAsync(new ConsulRequest<string> { RequestData = updateTokenModel.Id }).Result;
-            DisplayJson(readToken);
-            Assert.Equal(updateTokenModel.Name, readToken.Data[0].Name);
-
-            var clonedToken = _consulClient.V1.ACL.LegacyToken.CloneAsync(new ConsulRequest<string> { RequestData = readToken.Data[0].Id }).Result;
-            DisplayJson(clonedToken);
-            Assert.NotNull(clonedToken.Data);
-
-            var list = _consulClient.V1.ACL.LegacyToken.ListAsync().Result;
-            DisplayJson(list);
-            Assert.True(list.Data.Count > 1);
-
-            var repStatus = _consulClient.V1.ACL.CheckReplicationAsync().Result;
-            DisplayJson(repStatus);
-            Assert.NotNull(repStatus.Data);
-
-            var del1 = _consulClient.V1.ACL.LegacyToken.DeleteAsync(new ConsulRequest<string> { RequestData = readToken.Data[0].Id }).Result;
-            DisplayJson(del1);
-
-            var tokens = _consulClient.V1.ACL.LegacyToken.ReadAsync(new ConsulRequest<string> { RequestData = updateTokenModel.Id }).Result;
-            DisplayJson(tokens);
-            Assert.True(tokens.Data.Count == 0);
-
-            var del2 = _consulClient.V1.ACL.LegacyToken.DeleteAsync(new ConsulRequest<string> { RequestData = clonedToken.Data }).Result;
-            DisplayJson(del2);
         }
 
         private static void DisplayJson<T>(T value)

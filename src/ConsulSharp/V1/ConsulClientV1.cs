@@ -1,5 +1,6 @@
 ﻿using ConsulSharp.Core;
 using ConsulSharp.V1.ACL;
+using ConsulSharp.V1.ACL.Agent;
 using ConsulSharp.V1.Event;
 using ConsulSharp.V1.KeyValue;
 using ConsulSharp.V1.Session;
@@ -14,6 +15,7 @@ namespace ConsulSharp.V1
         public ConsulClientV1(Polymath polymath)
         {
             ACL = new ACLProvider(polymath);
+            Agent = new AgentProvider(polymath);
             Event = new EventProvider(polymath);
             KeyValue = new KeyValueProvider(polymath);
             Session = new SessionProvider(polymath);
@@ -23,6 +25,8 @@ namespace ConsulSharp.V1
         }
 
         public IACL ACL { get; }
+
+        public IAgent Agent { get; }
 
         public IEvent Event { get; }
 

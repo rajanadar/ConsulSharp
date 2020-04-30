@@ -1,4 +1,5 @@
 ﻿using ConsulSharp.V1.ACL;
+using ConsulSharp.V1.ACL.Agent;
 using ConsulSharp.V1.Event;
 using ConsulSharp.V1.KeyValue;
 using ConsulSharp.V1.Session;
@@ -17,6 +18,11 @@ namespace ConsulSharp.V1
         /// The ACL interface.
         /// </summary>
         IACL ACL { get; }
+
+        /// <summary>
+        /// The Agent interface.
+        /// </summary>
+        IAgent Agent { get; }
 
         /// <summary>
         /// The Event interface.
