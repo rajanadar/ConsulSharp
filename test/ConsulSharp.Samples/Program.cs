@@ -202,6 +202,9 @@ namespace ConsulSharp.Samples
             var members = _consulClient.V1.Agent.ListMembersAsync(new ConsulRequest<ListMemberRequest> { RequestData = new ListMemberRequest { WANMembers = true, Segment = "_all" } }).Result;
             
             DisplayJson(members);
+
+            var configAndMember = _consulClient.V1.Agent.ReadConfigAsync().Result;
+            DisplayJson(configAndMember);
         }
 
         private static void RunSessionSamples()
