@@ -29,6 +29,6 @@ namespace ConsulSharp.V1.ACL.AuthMethod
         /// <summary>
         /// This endpoint lists all the ACL tokens.
         /// </summary>
-        Task<ConsulResponse<List<AuthMethodModel>>> ListAsync(ConsulRequest<string> request = null);
+        Task<ConsulResponse<List<AuthMethodModel>>> ListAsync(ConsulRequest request = null);
     }
 }

@@ -1,12 +1,15 @@
 ﻿using Newtonsoft.Json;
 
-namespace ConsulSharp.V1.ACL.AuthMethod
+namespace ConsulSharp.V1.ACL.BindingRule
 {
     /// <summary>
-    /// AuthMethod Model.
+    /// BindingRule Model.
     /// </summary>
-    public class AuthMethodModel : AbstractAuthMethod
+    public class BindingRuleModel : AbstractBindingRule
     {
+        [JsonProperty("ID")]
+        public string BindingRuleId { get; set; }
+
         [JsonProperty("CreateIndex")]
         public ulong? CreateIndex { get; set; }
 

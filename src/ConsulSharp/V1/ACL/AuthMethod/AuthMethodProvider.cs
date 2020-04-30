@@ -37,9 +37,9 @@ namespace ConsulSharp.V1.ACL.AuthMethod
             return response.Map(() => bool.Parse(response.Data));
         }
 
-        public async Task<ConsulResponse<List<AuthMethodModel>>> ListAsync(ConsulRequest<string> request = null)
+        public async Task<ConsulResponse<List<AuthMethodModel>>> ListAsync(ConsulRequest request = null)
         {
-            return await _polymath.MakeConsulApiRequest<List<AuthMethodModel>>(request, "v1/acl/auth-methods" + (!string.IsNullOrWhiteSpace(request?.RequestData) ? "?policy=" + request.RequestData : ""), HttpMethod.Get).ConfigureAwait(_polymath.ConsulClientSettings.ContinueAsyncTasksOnCapturedContext);
+            return await _polymath.MakeConsulApiRequest<List<AuthMethodModel>>(request, "v1/acl/auth-methods", HttpMethod.Get).ConfigureAwait(_polymath.ConsulClientSettings.ContinueAsyncTasksOnCapturedContext);
         }
     }
 }
