@@ -44,6 +44,13 @@ namespace ConsulSharp.V1.ACL.Agent
             return await _polymath.MakeConsulApiRequest<JToken>(request, "v1/agent/maintenance" + qs, HttpMethod.Put).ConfigureAwait(_polymath.ConsulClientSettings.ContinueAsyncTasksOnCapturedContext);
         }
 
+        public async Task<ConsulResponse<MetricsModel>> GetMetricsAsync(ConsulRequest<MetricsRequest> request = null)
+        {
+            var qs = (!string.IsNullOrEmpty(request?.RequestData?.Format) && string.Equals(request.RequestData.Format, MetricsFormat.PROMETHEUS, StringComparison.OrdinalIgnoreCase)) ? "?format=" + MetricsFormat.PROMETHEUS : string.Empty;
+
+            return await _polymath.MakeConsulApiRequest<MetricsModel>(request, "v1/agent/metrics" + qs, HttpMethod.Get).ConfigureAwait(_polymath.ConsulClientSettings.ContinueAsyncTasksOnCapturedContext);
+        }
+
         private string GetQueryString(ListMemberRequest requestData)
         {
             var result = new List<string>();

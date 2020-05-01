@@ -226,6 +226,9 @@ namespace ConsulSharp.Samples
 
             var disableMaintenance = _consulClient.V1.Agent.ToggleMaintenanceModeAsync(request).Result;
             DisplayJson(disableMaintenance);
+
+            var metrics = _consulClient.V1.Agent.GetMetricsAsync().Result;
+            DisplayJson(metrics);
         }
 
         private static void RunSessionSamples()

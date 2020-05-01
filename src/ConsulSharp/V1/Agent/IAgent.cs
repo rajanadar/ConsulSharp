@@ -34,5 +34,10 @@ namespace ConsulSharp.V1.ACL.Agent
         /// Maintenance mode is persistent and will be automatically restored on agent restart.
         /// </summary>
         Task<ConsulResponse> ToggleMaintenanceModeAsync(ConsulRequest<MaintenanceRequest> request);
+
+        /// <summary>
+        /// This endpoint will dump the metrics for the most recent finished interval. 
+        /// </summary>
+        Task<ConsulResponse<MetricsModel>> GetMetricsAsync(ConsulRequest<MetricsRequest> request = null);
     }
 }
