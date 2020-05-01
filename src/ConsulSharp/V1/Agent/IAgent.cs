@@ -39,5 +39,12 @@ namespace ConsulSharp.V1.ACL.Agent
         /// This endpoint will dump the metrics for the most recent finished interval. 
         /// </summary>
         Task<ConsulResponse<MetricsModel>> GetMetricsAsync(ConsulRequest<MetricsRequest> request = null);
+
+        // Task<ConsulResponse<string>> StreamLogAsync(ConsulRequest<StreamLogRequest> request);
+
+        /// <summary>
+        /// This endpoint instructs the agent to attempt to connect to a given address.
+        /// </summary>
+        Task<ConsulResponse> JoinAsync(ConsulRequest<JoinRequest> request);
     }
 }

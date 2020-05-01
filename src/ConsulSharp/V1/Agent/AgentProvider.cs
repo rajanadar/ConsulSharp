@@ -46,9 +46,33 @@ namespace ConsulSharp.V1.ACL.Agent
 
         public async Task<ConsulResponse<MetricsModel>> GetMetricsAsync(ConsulRequest<MetricsRequest> request = null)
         {
-            var qs = (!string.IsNullOrEmpty(request?.RequestData?.Format) && string.Equals(request.RequestData.Format, MetricsFormat.PROMETHEUS, StringComparison.OrdinalIgnoreCase)) ? "?format=" + MetricsFormat.PROMETHEUS : string.Empty;
+            var plain = !string.IsNullOrEmpty(request?.RequestData?.Format) && string.Equals(request.RequestData.Format, MetricsFormat.PROMETHEUS, StringComparison.OrdinalIgnoreCase);
 
-            return await _polymath.MakeConsulApiRequest<MetricsModel>(request, "v1/agent/metrics" + qs, HttpMethod.Get).ConfigureAwait(_polymath.ConsulClientSettings.ContinueAsyncTasksOnCapturedContext);
+            var qs = plain ? "?format=" + MetricsFormat.PROMETHEUS : string.Empty;
+
+            return await _polymath.MakeConsulApiRequest<MetricsModel>(request, "v1/agent/metrics" + qs, HttpMethod.Get, rawResponse: plain).ConfigureAwait(_polymath.ConsulClientSettings.ContinueAsyncTasksOnCapturedContext);
+        }
+
+        public async Task<ConsulResponse<string>> StreamLogAsync(ConsulRequest<StreamLogRequest> request)
+        {
+            Checker.NotNull(request, nameof(request));
+            Checker.NotNull(request.RequestData, nameof(request.RequestData));
+            Checker.NotNull(request.RequestData.LogLevel, nameof(request.RequestData.LogLevel));
+
+            var qs = "?loglevel=" + request.RequestData.LogLevel + "&logjson=" + request.RequestData.LogJson.ToString().ToLowerInvariant();
+
+            return await _polymath.MakeConsulApiRequest<string>(request, "v1/agent/monitor" + qs, HttpMethod.Get, rawResponse: true).ConfigureAwait(_polymath.ConsulClientSettings.ContinueAsyncTasksOnCapturedContext);
+        }
+
+        public async Task<ConsulResponse> JoinAsync(ConsulRequest<JoinRequest> request)
+        {
+            Checker.NotNull(request, nameof(request));
+            Checker.NotNull(request.RequestData, nameof(request.RequestData));
+            Checker.NotNull(request.RequestData.AgentAddress, nameof(request.RequestData.AgentAddress));
+
+            var qs = "?wan=" + request.RequestData.OverWAN.ToString().ToLowerInvariant();
+
+            return await _polymath.MakeConsulApiRequest<JToken>(request, "v1/agent/join/" + request.RequestData.AgentAddress + qs, HttpMethod.Get).ConfigureAwait(_polymath.ConsulClientSettings.ContinueAsyncTasksOnCapturedContext);
         }
 
         private string GetQueryString(ListMemberRequest requestData)

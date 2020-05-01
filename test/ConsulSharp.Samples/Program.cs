@@ -229,6 +229,15 @@ namespace ConsulSharp.Samples
 
             var metrics = _consulClient.V1.Agent.GetMetricsAsync().Result;
             DisplayJson(metrics);
+
+            //var logs = _consulClient.V1.Agent.StreamLogAsync(new ConsulRequest<StreamLogRequest>
+            //{
+            //    RequestData = new StreamLogRequest
+            //    {
+            //        LogLevel = "info"
+            //    }
+            //}).Result;
+            //DisplayJson(logs);
         }
 
         private static void RunSessionSamples()

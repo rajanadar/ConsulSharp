@@ -16,18 +16,18 @@ namespace ConsulSharp.V1.ACL.Agent
 
         public int Status { get; set; }
 
-        public int ProtocolMin { get; set; }
+        public double ProtocolMin { get; set; }
 
-        public int ProtocolMax { get; set; }
+        public double ProtocolMax { get; set; }
 
         [JsonProperty("ProtocolCur")]
-        public int ProtocolCurrent { get; set; }
+        public double ProtocolCurrent { get; set; }
 
-        public int DelegateMin { get; set; }
+        public double DelegateMin { get; set; }
 
-        public int DelegateMax { get; set; }
+        public double DelegateMax { get; set; }
 
         [JsonProperty("DelegateCur")]
-        public int DelegateCurrent { get; set; }
+        public double DelegateCurrent { get; set; }
     }
 }
