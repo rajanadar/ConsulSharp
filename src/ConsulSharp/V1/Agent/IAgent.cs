@@ -26,5 +26,13 @@ namespace ConsulSharp.V1.ACL.Agent
         /// Any errors encountered during this process are returned.
         /// </summary>
         Task<ConsulResponse<Dictionary<string, object>>> ReloadConfigAsync(ConsulRequest request = null);
+
+        /// <summary>
+        /// This endpoint places the agent into "maintenance mode". 
+        /// During maintenance mode, the node will be marked as unavailable and will not 
+        /// be present in DNS or API queries. This API call is idempotent.
+        /// Maintenance mode is persistent and will be automatically restored on agent restart.
+        /// </summary>
+        Task<ConsulResponse> ToggleMaintenanceModeAsync(ConsulRequest<MaintenanceRequest> request);
     }
 }

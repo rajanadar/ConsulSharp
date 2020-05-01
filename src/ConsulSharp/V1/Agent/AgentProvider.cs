@@ -1,9 +1,12 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
 using ConsulSharp.Core;
 using ConsulSharp.V1.Commons;
+using Newtonsoft.Json.Linq;
 
 namespace ConsulSharp.V1.ACL.Agent
 {
@@ -29,6 +32,16 @@ namespace ConsulSharp.V1.ACL.Agent
         public async Task<ConsulResponse<Dictionary<string, object>>> ReloadConfigAsync(ConsulRequest request = null)
         {
             return await _polymath.MakeConsulApiRequest<Dictionary<string, object>>(request, "v1/agent/reload", HttpMethod.Put).ConfigureAwait(_polymath.ConsulClientSettings.ContinueAsyncTasksOnCapturedContext);
+        }
+
+        public async Task<ConsulResponse> ToggleMaintenanceModeAsync(ConsulRequest<MaintenanceRequest> request)
+        {
+            Checker.NotNull(request, nameof(request));
+            Checker.NotNull(request.RequestData, nameof(request.RequestData));
+
+            var qs = "?enable=" + (request.RequestData.Mode == MaintenanceMode.Enable ? "true" : "false") + (!string.IsNullOrEmpty(request.RequestData.Reason) ? "&reason=" + WebUtility.UrlEncode(request.RequestData.Reason) : string.Empty);
+
+            return await _polymath.MakeConsulApiRequest<JToken>(request, "v1/agent/maintenance" + qs, HttpMethod.Put).ConfigureAwait(_polymath.ConsulClientSettings.ContinueAsyncTasksOnCapturedContext);
         }
 
         private string GetQueryString(ListMemberRequest requestData)

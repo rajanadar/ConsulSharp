@@ -209,6 +209,23 @@ namespace ConsulSharp.Samples
 
             var reloadResponse = _consulClient.V1.Agent.ReloadConfigAsync().Result;
             DisplayJson(reloadResponse);
+
+            var request = new ConsulRequest<MaintenanceRequest>
+            {
+                RequestData = new MaintenanceRequest
+                {
+                    Mode = MaintenanceMode.Enable,
+                    Reason = "Yo Yo Ma"
+                }
+            };
+
+            var enableMaintenance = _consulClient.V1.Agent.ToggleMaintenanceModeAsync(request).Result;
+            DisplayJson(enableMaintenance);
+
+            request.RequestData.Mode = MaintenanceMode.Disable;
+
+            var disableMaintenance = _consulClient.V1.Agent.ToggleMaintenanceModeAsync(request).Result;
+            DisplayJson(disableMaintenance);
         }
 
         private static void RunSessionSamples()
