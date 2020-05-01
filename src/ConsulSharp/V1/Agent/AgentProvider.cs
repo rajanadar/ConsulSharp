@@ -26,6 +26,11 @@ namespace ConsulSharp.V1.ACL.Agent
             return await _polymath.MakeConsulApiRequest<ConfigAndMemberModel>(request, "v1/agent/self", HttpMethod.Get).ConfigureAwait(_polymath.ConsulClientSettings.ContinueAsyncTasksOnCapturedContext);
         }
 
+        public async Task<ConsulResponse<Dictionary<string, object>>> ReloadConfigAsync(ConsulRequest request = null)
+        {
+            return await _polymath.MakeConsulApiRequest<Dictionary<string, object>>(request, "v1/agent/reload", HttpMethod.Put).ConfigureAwait(_polymath.ConsulClientSettings.ContinueAsyncTasksOnCapturedContext);
+        }
+
         private string GetQueryString(ListMemberRequest requestData)
         {
             var result = new List<string>();

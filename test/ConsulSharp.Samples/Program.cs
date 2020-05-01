@@ -98,13 +98,14 @@ namespace ConsulSharp.Samples
             });
 
             RunAclSamples();
-            RunAgentSamples();
             RunEventSamples();
             RunKeyValueSamples();
             RunSessionSamples();
             RunSnapshotSamples();
             RunStatusSamples();
             RunTransactionSamples();
+
+            RunAgentSamples();
         }
 
         private static void RunAclSamples()
@@ -205,6 +206,9 @@ namespace ConsulSharp.Samples
 
             var configAndMember = _consulClient.V1.Agent.ReadConfigAsync().Result;
             DisplayJson(configAndMember);
+
+            var reloadResponse = _consulClient.V1.Agent.ReloadConfigAsync().Result;
+            DisplayJson(reloadResponse);
         }
 
         private static void RunSessionSamples()

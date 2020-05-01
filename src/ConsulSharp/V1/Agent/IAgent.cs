@@ -20,5 +20,11 @@ namespace ConsulSharp.V1.ACL.Agent
         /// is subject to change without notice or deprecation.
         /// </summary>
         Task<ConsulResponse<ConfigAndMemberModel>> ReadConfigAsync(ConsulRequest request = null);
+
+        /// <summary>
+        /// This endpoint instructs the agent to reload its configuration. 
+        /// Any errors encountered during this process are returned.
+        /// </summary>
+        Task<ConsulResponse<Dictionary<string, object>>> ReloadConfigAsync(ConsulRequest request = null);
     }
 }
