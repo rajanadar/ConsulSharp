@@ -245,6 +245,14 @@ namespace ConsulSharp.Samples
                     OverWAN = true
                 })).Result;
             DisplayJson(join);
+
+            RunAgentCheckSamples();
+        }
+
+        private static void RunAgentCheckSamples()
+        {
+            var checks = _consulClient.V1.Agent.Check.ListAsync().Result;
+            Assert.True(checks.Data.Count == 0);
         }
 
         private static void RunSessionSamples()

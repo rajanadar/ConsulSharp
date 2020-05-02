@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
+using ConsulSharp.V1.ACL.Agent.Check;
 using ConsulSharp.V1.Commons;
 
 namespace ConsulSharp.V1.ACL.Agent
@@ -74,5 +75,7 @@ namespace ConsulSharp.V1.ACL.Agent
         /// When not being persisted, they will need to be reset if the agent is restarted.
         /// </summary>
         Task<ConsulResponse> UpdateACLTokenAsync(ConsulRequest<UpdateAgentTokenRequest> request);
+
+        ICheck Check { get; }
     }
 }
