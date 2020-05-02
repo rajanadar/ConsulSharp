@@ -116,7 +116,6 @@
 
   <ItemGroup>
     <Folder Include="V1\Agent\Connect\" />
-    <Folder Include="V1\Agent\Service\" />
   </ItemGroup>
 
 </Project>

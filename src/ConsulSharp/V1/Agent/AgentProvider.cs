@@ -6,6 +6,7 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using ConsulSharp.Core;
 using ConsulSharp.V1.ACL.Agent.Check;
+using ConsulSharp.V1.ACL.Agent.Service;
 using ConsulSharp.V1.Commons;
 using Newtonsoft.Json.Linq;
 
@@ -17,11 +18,14 @@ namespace ConsulSharp.V1.ACL.Agent
 
         public ICheck Check { get; }
 
+        public IService Service { get; }
+
         public AgentProvider(Polymath polymath)
         {
             _polymath = polymath;
 
             Check = new CheckProvider(polymath);
+            Service = new ServiceProvider(polymath);
         }
 
         public async Task<ConsulResponse<List<MemberModel>>> ListMembersAsync(ConsulRequest<ListMemberRequest> request = null)
