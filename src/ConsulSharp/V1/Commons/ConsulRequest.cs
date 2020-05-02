@@ -77,5 +77,18 @@
         /// The namespace to use to achieve tenant level isolation.
         /// </summary>
         public string PerRequestNamespace { get; set; }
+
+        /// <summary>
+        /// Builder to easily get the consul request if you only mean to provide the data.
+        /// </summary>
+        /// <param name="requestData"></param>
+        /// <returns></returns>
+        public static ConsulRequest<TRequestData> WithData<TRequestData>(TRequestData requestData)
+        {
+            return new ConsulRequest<TRequestData>
+            {
+                RequestData = requestData
+            };
+        }
     }
 }

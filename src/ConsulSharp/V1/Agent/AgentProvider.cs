@@ -91,6 +91,16 @@ namespace ConsulSharp.V1.ACL.Agent
             return await _polymath.MakeConsulApiRequest<JToken>(request, "v1/agent/force-leave/" + request.RequestData.NodeName + qs, HttpMethod.Put).ConfigureAwait(_polymath.ConsulClientSettings.ContinueAsyncTasksOnCapturedContext);
         }
 
+        public async Task<ConsulResponse> UpdateACLTokenAsync(ConsulRequest<UpdateAgentTokenRequest> request)
+        {
+            Checker.NotNull(request, nameof(request));
+            Checker.NotNull(request.RequestData, nameof(request.RequestData));
+            Checker.NotNull(request.RequestData.TokenType, nameof(request.RequestData.TokenType));
+            Checker.NotNull(request.RequestData.Token, nameof(request.RequestData.Token));
+
+            return await _polymath.MakeConsulApiRequest<JToken>(request, "v1/agent/token/" + request.RequestData.TokenType, HttpMethod.Put, new { Token = request.RequestData.Token }).ConfigureAwait(_polymath.ConsulClientSettings.ContinueAsyncTasksOnCapturedContext);
+        }
+
         private string GetQueryString(ListMemberRequest requestData)
         {
             var result = new List<string>();

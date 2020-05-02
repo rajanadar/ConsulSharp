@@ -239,14 +239,11 @@ namespace ConsulSharp.Samples
             //}).Result;
             //DisplayJson(logs);
 
-            var join = _consulClient.V1.Agent.JoinAsync(new ConsulRequest<JoinRequest>
-            {
-                RequestData = new JoinRequest
+            var join = _consulClient.V1.Agent.JoinAsync(ConsulRequest.WithData(new JoinRequest
                 {
                     AgentAddress = "127.0.0.1",
                     OverWAN = true
-                }
-            }).Result;
+                })).Result;
             DisplayJson(join);
         }
 

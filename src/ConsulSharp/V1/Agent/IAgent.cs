@@ -65,5 +65,14 @@ namespace ConsulSharp.V1.ACL.Agent
         /// Forcing a node into the left state allows its old entries to be removed.
         /// </summary>
         Task<ConsulResponse> ForceLeaveAsync(ConsulRequest<ForceLeaveRequest> request);
+
+        /// <summary>
+        /// This endpoint updates the ACL tokens currently in use by the agent. 
+        /// It can be used to introduce ACL tokens to the agent for the first time, 
+        /// or to update tokens that were initially loaded from the agent's configuration. 
+        /// Tokens will be persisted only if the acl.enable_token_persistence configuration is true. 
+        /// When not being persisted, they will need to be reset if the agent is restarted.
+        /// </summary>
+        Task<ConsulResponse> UpdateACLTokenAsync(ConsulRequest<UpdateAgentTokenRequest> request);
     }
 }
