@@ -238,6 +238,16 @@ namespace ConsulSharp.Samples
             //    }
             //}).Result;
             //DisplayJson(logs);
+
+            var join = _consulClient.V1.Agent.JoinAsync(new ConsulRequest<JoinRequest>
+            {
+                RequestData = new JoinRequest
+                {
+                    AgentAddress = "127.0.0.1",
+                    OverWAN = true
+                }
+            }).Result;
+            DisplayJson(join);
         }
 
         private static void RunSessionSamples()

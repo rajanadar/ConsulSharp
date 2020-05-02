@@ -72,7 +72,23 @@ namespace ConsulSharp.V1.ACL.Agent
 
             var qs = "?wan=" + request.RequestData.OverWAN.ToString().ToLowerInvariant();
 
-            return await _polymath.MakeConsulApiRequest<JToken>(request, "v1/agent/join/" + request.RequestData.AgentAddress + qs, HttpMethod.Get).ConfigureAwait(_polymath.ConsulClientSettings.ContinueAsyncTasksOnCapturedContext);
+            return await _polymath.MakeConsulApiRequest<JToken>(request, "v1/agent/join/" + request.RequestData.AgentAddress + qs, HttpMethod.Put).ConfigureAwait(_polymath.ConsulClientSettings.ContinueAsyncTasksOnCapturedContext);
+        }
+
+        public async Task<ConsulResponse> LeaveAsync(ConsulRequest request = null)
+        {
+            return await _polymath.MakeConsulApiRequest<JToken>(request, "v1/agent/leave", HttpMethod.Put).ConfigureAwait(_polymath.ConsulClientSettings.ContinueAsyncTasksOnCapturedContext);
+        }
+
+        public async Task<ConsulResponse> ForceLeaveAsync(ConsulRequest<ForceLeaveRequest> request)
+        {
+            Checker.NotNull(request, nameof(request));
+            Checker.NotNull(request.RequestData, nameof(request.RequestData));
+            Checker.NotNull(request.RequestData.NodeName, nameof(request.RequestData.NodeName));
+
+            var qs = request.RequestData.Prune ? "?prune" : string.Empty;
+
+            return await _polymath.MakeConsulApiRequest<JToken>(request, "v1/agent/force-leave/" + request.RequestData.NodeName + qs, HttpMethod.Put).ConfigureAwait(_polymath.ConsulClientSettings.ContinueAsyncTasksOnCapturedContext);
         }
 
         private string GetQueryString(ListMemberRequest requestData)

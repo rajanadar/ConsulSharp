@@ -40,11 +40,30 @@ namespace ConsulSharp.V1.ACL.Agent
         /// </summary>
         Task<ConsulResponse<MetricsModel>> GetMetricsAsync(ConsulRequest<MetricsRequest> request = null);
 
+        // raja todo> write this api in a stream oriented cancelation token base puppy format.
         // Task<ConsulResponse<string>> StreamLogAsync(ConsulRequest<StreamLogRequest> request);
 
         /// <summary>
         /// This endpoint instructs the agent to attempt to connect to a given address.
         /// </summary>
         Task<ConsulResponse> JoinAsync(ConsulRequest<JoinRequest> request);
+
+        /// <summary>
+        /// This endpoint triggers a graceful leave and shutdown of the agent. 
+        /// It is used to ensure other nodes see the agent as "left" instead of "failed". 
+        /// Nodes that leave will not attempt to re-join the cluster on restarting with a snapshot.
+        /// For nodes in server mode, the node is removed from the Raft peer set in a graceful manner.
+        /// This is critical, as in certain situations a non-graceful leave can affect cluster availability.
+        /// </summary>
+        Task<ConsulResponse> LeaveAsync(ConsulRequest request = null);
+
+        /// <summary>
+        /// This endpoint instructs the agent to force a node into the left state. 
+        /// If a node fails unexpectedly, then it will be in a failed state. 
+        /// Once in the failed state, Consul will attempt to reconnect, and the services and checks 
+        /// belonging to that node will not be cleaned up. 
+        /// Forcing a node into the left state allows its old entries to be removed.
+        /// </summary>
+        Task<ConsulResponse> ForceLeaveAsync(ConsulRequest<ForceLeaveRequest> request);
     }
 }
