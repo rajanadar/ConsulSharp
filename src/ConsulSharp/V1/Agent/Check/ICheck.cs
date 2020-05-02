@@ -11,5 +11,7 @@ namespace ConsulSharp.V1.ACL.Agent.Check
         Task<ConsulResponse<string>> RegisterAsync(ConsulRequest<CheckRequest> request);
 
         Task<ConsulResponse> DeregisterAsync(ConsulRequest<string> request);
+
+        Task<ConsulResponse> SetTTLTypeStatusAsync(ConsulRequest<StatusRequest> request);
     }
 }

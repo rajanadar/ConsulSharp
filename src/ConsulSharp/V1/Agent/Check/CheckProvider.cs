@@ -38,5 +38,13 @@ namespace ConsulSharp.V1.ACL.Agent.Check
 
             return await _polymath.MakeConsulApiRequest<JToken>(request, "v1/agent/check/deregister/" + request.RequestData, HttpMethod.Put, request.RequestData).ConfigureAwait(_polymath.ConsulClientSettings.ContinueAsyncTasksOnCapturedContext);
         }
+
+        public async Task<ConsulResponse> SetTTLTypeStatusAsync(ConsulRequest<StatusRequest> request)
+        {
+            Checker.NotNull(request, nameof(request));
+            Checker.NotNull(request.RequestData, nameof(request.RequestData));
+
+            return await _polymath.MakeConsulApiRequest<JToken>(request, "v1/agent/check/update/" + request.RequestData.CheckId, HttpMethod.Put, request.RequestData).ConfigureAwait(_polymath.ConsulClientSettings.ContinueAsyncTasksOnCapturedContext);
+        }
     }
 }
