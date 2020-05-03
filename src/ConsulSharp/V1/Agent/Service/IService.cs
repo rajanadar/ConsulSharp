@@ -8,7 +8,7 @@ namespace ConsulSharp.V1.ACL.Agent.Service
     {
         Task<ConsulResponse<Dictionary<string, AgentServiceModel>>> ListAsync(ConsulRequest<string> request = null);
 
-        Task<ConsulResponse<ServiceConfigModel>> GetConfigAsync(ConsulRequest<string> request);
+        Task<ConsulResponse<AgentServiceModel>> GetConfigAsync(ConsulRequest<string> request);
 
         Task<ConsulResponse<HealthResponse>> GetHealthAsync(ConsulRequest<HealthRequest> request);
 
