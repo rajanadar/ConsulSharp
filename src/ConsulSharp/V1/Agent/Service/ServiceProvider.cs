@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
 using ConsulSharp.Core;
-using ConsulSharp.V1.ACL.Agent.Service;
 using ConsulSharp.V1.Commons;
 using Newtonsoft.Json.Linq;
 
@@ -51,38 +51,48 @@ namespace ConsulSharp.V1.ACL.Agent.Service
 
             qs += (plain ? "?format=text" : string.Empty);
 
+            var status = HttpStatusCode.OK;
+
             if (plain)
             {
-                var plainText = await _polymath.MakeConsulApiRequest<string>(request, "v1/agent/health/service/" + qs, HttpMethod.Get, rawResponse: true).ConfigureAwait(_polymath.ConsulClientSettings.ContinueAsyncTasksOnCapturedContext);
+                var plainText = await _polymath.MakeConsulApiRequest<string>(request, "v1/agent/health/service/" + qs, HttpMethod.Get, rawResponse: true, postResponseFunc: r => { status = r.StatusCode; return true; }).ConfigureAwait(_polymath.ConsulClientSettings.ContinueAsyncTasksOnCapturedContext);
 
-                return plainText.Map(() => new HealthResponse { PlainText = plainText.Data });
+                return plainText.Map(() => new HealthResponse { StatusCode = status, PlainText = plainText.Data });
             }
 
             if (!string.IsNullOrEmpty(request.RequestData.ServiceId))
             {
-                var service = await _polymath.MakeConsulApiRequest<Dictionary<string, AgentServiceModel>>(request, "v1/agent/health/service/" + qs, HttpMethod.Get).ConfigureAwait(_polymath.ConsulClientSettings.ContinueAsyncTasksOnCapturedContext);
+                var service = await _polymath.MakeConsulApiRequest<Dictionary<string, AgentServiceModel>>(request, "v1/agent/health/service/" + qs, HttpMethod.Get, postResponseFunc: r => { status = r.StatusCode; return true; }).ConfigureAwait(_polymath.ConsulClientSettings.ContinueAsyncTasksOnCapturedContext);
 
-                return service.Map(() => new HealthResponse { Statuses = service.Data.ToDictionary(kv => kv.Key, kv => new List<AgentServiceModel> { kv.Value }) });
+                return service.Map(() => new HealthResponse { StatusCode = status, Statuses = service.Data.ToDictionary(kv => kv.Key, kv => new List<AgentServiceModel> { kv.Value }) });
             }
 
-            var services = await _polymath.MakeConsulApiRequest<Dictionary<string, List<AgentServiceModel>>>(request, "v1/agent/health/service/" + qs, HttpMethod.Get).ConfigureAwait(_polymath.ConsulClientSettings.ContinueAsyncTasksOnCapturedContext);
+            var services = await _polymath.MakeConsulApiRequest<Dictionary<string, List<AgentServiceModel>>>(request, "v1/agent/health/service/" + qs, HttpMethod.Get, postResponseFunc: r => { status = r.StatusCode; return true; }).ConfigureAwait(_polymath.ConsulClientSettings.ContinueAsyncTasksOnCapturedContext);
 
-            return services.Map(() => new HealthResponse { Statuses = services.Data });
+            return services.Map(() => new HealthResponse { StatusCode = status, Statuses = services.Data });
         }
 
-        public Task<ConsulResponse> RegisterAsync(ConsulRequest<RegisterRequest> request)
+        public async Task<ConsulResponse> RegisterAsync(ConsulRequest<RegisterRequest> request)
         {
-            throw new System.NotImplementedException();
+            return await _polymath.MakeConsulApiRequest<JToken>(request, "v1/agent/service/register", HttpMethod.Put, request.RequestData).ConfigureAwait(_polymath.ConsulClientSettings.ContinueAsyncTasksOnCapturedContext);
         }
 
-        public Task<ConsulResponse> DeregisterAsync(ConsulRequest<string> request)
+        public async Task<ConsulResponse> DeregisterAsync(ConsulRequest<string> request)
         {
-            throw new System.NotImplementedException();
+            Checker.NotNull(request, nameof(request));
+            Checker.NotNull(request.RequestData, nameof(request.RequestData));
+
+            return await _polymath.MakeConsulApiRequest<JToken>(request, "v1/agent/service/deregister/" + request.RequestData, HttpMethod.Put, request.RequestData).ConfigureAwait(_polymath.ConsulClientSettings.ContinueAsyncTasksOnCapturedContext);
         }
 
-        public Task<ConsulResponse> ToggleMaintenanceModeAsync(ConsulRequest<MaintenanceRequest> request)
+        public async Task<ConsulResponse> ToggleMaintenanceModeAsync(ConsulRequest<MaintenanceRequest> request)
         {
-            throw new System.NotImplementedException();
+            Checker.NotNull(request, nameof(request));
+            Checker.NotNull(request.RequestData, nameof(request.RequestData));
+
+            var qs = "?enable=" + (request.RequestData.Mode == MaintenanceMode.Enable ? "true" : "false") + (!string.IsNullOrEmpty(request.RequestData.Reason) ? "&reason=" + WebUtility.UrlEncode(request.RequestData.Reason) : string.Empty);
+
+            return await _polymath.MakeConsulApiRequest<JToken>(request, "v1/agent/service/maintenance/" + request.RequestData.ServiceId + qs, HttpMethod.Put).ConfigureAwait(_polymath.ConsulClientSettings.ContinueAsyncTasksOnCapturedContext);
         }
     }
 }
