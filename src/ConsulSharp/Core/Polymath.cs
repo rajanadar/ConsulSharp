@@ -173,7 +173,7 @@ namespace ConsulSharp.Core
                         resourcePath = resourcePath + joiner + "cached";
                     }
 
-                    if (request.PrettyJsonResponse)
+                    if (request.PrettyJsonResponse == true)
                     {
                         var joiner = resourcePath.Contains("?") ? "&" : "?";
                         resourcePath = resourcePath + joiner + "pretty";

@@ -8,14 +8,14 @@
         /// <summary>
         /// Gets or sets a flag indicating if the request should be blocking.
         /// </summary>
-        public bool Blocking { get; set; }
+        public bool? Blocking { get; set; }
 
         /// <summary>
         /// Most of the read query endpoints support multiple levels of consistency. 
         /// Since no policy will suit all clients' needs, these consistency modes allow the user to have the ultimate say 
         /// in how to balance the trade-offs inherent in a distributed system.
         /// </summary>
-        public ConsistencyMode ConsistencyMode { get; set; }
+        public ConsistencyMode? ConsistencyMode { get; set; }
 
         /// <summary>
         /// Gets or sets the unique identifier representing the current state of the requested resource for blocking queries.
@@ -71,7 +71,7 @@
         /// <summary>
         /// Gets or sets a flag indicating if the response json should be pretty.
         /// </summary>
-        public bool PrettyJsonResponse { get; set; }
+        public bool? PrettyJsonResponse { get; set; }
 
         /// <summary>
         /// The namespace to use to achieve tenant level isolation.
