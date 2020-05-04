@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using ConsulSharp.V1.ACL.Agent.Check;
+using ConsulSharp.V1.ACL.Agent.Connect;
 using ConsulSharp.V1.ACL.Agent.Service;
 using ConsulSharp.V1.Commons;
 
@@ -80,5 +81,7 @@ namespace ConsulSharp.V1.ACL.Agent
         ICheck Check { get; }
 
         IService Service { get; }
+
+        IConnect Connect { get; }
     }
 }
